@@ -13,7 +13,7 @@ export default function AdminLayout({
       )}
     >
       <AdminSidebar />
-      <main className="w-full bg-background border-l rounded-tl-4xl overflow-hidden p-10">
+      <main className="w-full bg-background md:border-l md:rounded-tl-4xl overflow-hidden p-10">
         {children}
       </main>
     </div>

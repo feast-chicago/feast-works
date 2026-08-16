@@ -6,8 +6,6 @@ import {
   BookOpenText,
   ChartBarBig,
   CreditCard,
-  DollarSign,
-  FileText,
   House,
   Settings2,
   UsersRound,
@@ -15,8 +13,11 @@ import {
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Separator } from "./ui/separator";
+import { usePathname } from "next/navigation";
+import { Highlighter } from "./ui/highlighter";
 
 export default function AdminSidebar() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const businessMenuItems = [
     {
@@ -25,44 +26,34 @@ export default function AdminSidebar() {
       label: "Home",
     },
     {
-      href: "/admin#users",
+      href: "/admin/users",
       icon: <UsersRound className="size-5 shrink-0" />,
       label: "Users & Patrons",
     },
     {
-      href: "/admin#menu",
+      href: "/admin/menu",
       icon: <BookOpenText className="size-5 shrink-0" />,
-      label: "Menu",
+      label: "Menu & Promotions",
     },
     {
-      href: "/admin#promotions",
-      icon: <DollarSign className="size-5 shrink-0" />,
-      label: "Promotions",
-    },
-    {
-      href: "/admin#notifications",
+      href: "/admin/notifications",
       icon: <Bell className="size-5 shrink-0" />,
       label: "Notifications",
     },
     {
-      href: "/admin#general",
+      href: "/admin/settings",
       icon: <Settings2 className="size-5 shrink-0" />,
       label: "Settings",
     },
   ];
   const billingMenuItems = [
     {
-      href: "/admin#billing",
+      href: "/admin/billing",
       icon: <CreditCard className="size-5 shrink-0" />,
-      label: "Billing Info",
+      label: "Billing",
     },
     {
-      href: "/admin#invoices",
-      icon: <FileText className="size-5 shrink-0" />,
-      label: "Invoices",
-    },
-    {
-      href: "/admin#reports",
+      href: "/admin/reports",
       icon: <ChartBarBig className="size-5 shrink-0" />,
       label: "Reports",
     },
@@ -74,9 +65,15 @@ export default function AdminSidebar() {
         <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
           {open ? <Logo /> : <LogoIcon />}
           <div className="mt-8 flex flex-col gap-2">
-            {businessMenuItems.map((link, idx) => (
-              <SidebarLink key={idx} link={link} />
-            ))}
+            {businessMenuItems.map((link, idx) =>
+              link.href === pathname ? (
+                <Highlighter key={idx} action="box" color="#fd6f3b">
+                  <SidebarLink link={link} />
+                </Highlighter>
+              ) : (
+                <SidebarLink key={idx} link={link} />
+              ),
+            )}
             <Separator decorative />
             {billingMenuItems.map((link, idx) => (
               <SidebarLink key={idx} link={link} />
