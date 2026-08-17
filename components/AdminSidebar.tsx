@@ -68,7 +68,10 @@ export default function AdminSidebar() {
             {businessMenuItems.map((link, idx) =>
               link.href === pathname ? (
                 <Highlighter key={idx} action="box" color="#fd6f3b">
-                  <SidebarLink link={link} />
+                  <SidebarLink
+                    link={link}
+                    className="text-sidebar-accent-foreground"
+                  />
                 </Highlighter>
               ) : (
                 <SidebarLink key={idx} link={link} />
