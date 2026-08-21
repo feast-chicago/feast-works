@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -15,6 +17,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CircleAlert } from "lucide-react";
+import { useState } from "react";
 
 export default function SettingsPage() {
   return (
@@ -32,6 +41,13 @@ export default function SettingsPage() {
 }
 
 function GeneralSettings() {
+  const [businessName, setBusinessName] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [description, setDescription] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -39,73 +55,99 @@ function GeneralSettings() {
         <CardDescription>Your basic business details.</CardDescription>
       </CardHeader>
       <CardContent>
-        <FieldSet>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="business-name">Business name</FieldLabel>
-              <Input
-                id="business-name"
-                autoComplete="off"
-                placeholder="Example Restaurant"
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="tagline">Tagline</FieldLabel>
-              <Input
-                id="tagline"
-                autoComplete="off"
-                placeholder="Lorem ipsum dolor sit amet..."
-              />
-              <FieldDescription className="text-xs">
-                A short and sweet tagline.
-              </FieldDescription>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="description">Description</FieldLabel>
-              <Textarea
-                id="description"
-                autoComplete="off"
-                placeholder="Lorem ipsum dolor sit amet..."
-              />
-              <FieldDescription className="text-xs">
-                A more detailed description for your business.
-              </FieldDescription>
-            </Field>
-            <span className="flex gap-10">
+        <form action="">
+          <FieldSet>
+            <FieldGroup>
+              {/* Business name */}
               <Field>
-                <FieldLabel htmlFor="phone">Phone</FieldLabel>
+                <FieldLabel htmlFor="business-name">
+                  Business name <SettingsWarningIcon />
+                </FieldLabel>
                 <Input
-                  id="phone"
+                  id="business-name"
                   autoComplete="off"
-                  placeholder="(773) 555-0100"
+                  placeholder="Example Restaurant"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
                 />
               </Field>
+
+              {/* Tagline */}
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="tagline">Tagline</FieldLabel>
                 <Input
-                  id="email"
+                  id="tagline"
                   autoComplete="off"
-                  placeholder="info@example.com"
+                  placeholder="Lorem ipsum dolor sit amet..."
+                  value={tagline}
+                  onChange={(e) => setTagline(e.target.value)}
+                />
+                <FieldDescription className="text-xs">
+                  A short and sweet tagline.
+                </FieldDescription>
+              </Field>
+
+              {/* Description */}
+              <Field>
+                <FieldLabel htmlFor="description">
+                  Description <SettingsWarningIcon />
+                </FieldLabel>
+                <Textarea
+                  id="description"
+                  autoComplete="off"
+                  placeholder="Lorem ipsum dolor sit amet..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <FieldDescription className="text-xs">
+                  A more detailed description for your business.
+                </FieldDescription>
+              </Field>
+
+              {/* Phone & Email */}
+              <span className="grid max-w-sm grid-cols-2 gap-5">
+                <Field>
+                  <FieldLabel htmlFor="phone">Phone</FieldLabel>
+                  <Input
+                    id="phone"
+                    autoComplete="off"
+                    placeholder="+1 (773) 555-0100"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
+                  <Input
+                    id="email"
+                    autoComplete="off"
+                    placeholder="info@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Field>
+              </span>
+
+              {/* Business address */}
+              <Field>
+                <FieldLabel htmlFor="address">Business address</FieldLabel>
+                <Input
+                  id="address"
+                  autoComplete="off"
+                  placeholder="123 N Main St, Chicago, IL 60600"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                 />
               </Field>
-            </span>
 
-            <Field>
-              <FieldLabel htmlFor="address">Business address</FieldLabel>
-              <Input
-                id="address"
-                autoComplete="off"
-                placeholder="123 N Main St, Chicago, IL 60600"
-              />
-            </Field>
-
-            {/* <Field>
+              {/* <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
               <Input id="username" autoComplete="off" aria-invalid />
               <FieldError></FieldError>
             </Field> */}
-          </FieldGroup>
-        </FieldSet>
+            </FieldGroup>
+          </FieldSet>
+        </form>
       </CardContent>
     </Card>
   );
@@ -191,5 +233,18 @@ function IntegrationSettings() {
       </CardHeader>
       <CardContent></CardContent>
     </Card>
+  );
+}
+
+function SettingsWarningIcon() {
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <CircleAlert className="size-4 text-muted-foreground" />
+      </TooltipTrigger>
+      <TooltipContent>
+        The system needs a quick update to fully apply this change.
+      </TooltipContent>
+    </Tooltip>
   );
 }

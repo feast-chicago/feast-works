@@ -1,6 +1,7 @@
 "use client";
 
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
+import { UserAvatar, useUser } from "@clerk/nextjs";
 import {
   Bell,
   BookOpenText,
@@ -11,14 +12,15 @@ import {
   UsersRound,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
-import { Separator } from "./ui/separator";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Highlighter } from "./ui/highlighter";
+import { Separator } from "./ui/separator";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { isLoaded, user } = useUser();
   const businessMenuItems = [
     {
       href: "/admin",
@@ -59,6 +61,7 @@ export default function AdminSidebar() {
     },
   ];
 
+  if (!isLoaded || !user) return;
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarBody className="h-screen justify-between gap-10 bg-sidebar">
@@ -68,10 +71,7 @@ export default function AdminSidebar() {
             {businessMenuItems.map((link, idx) =>
               link.href === pathname ? (
                 <Highlighter key={idx} action="box" color="#fd6f3b">
-                  <SidebarLink
-                    link={link}
-                    className="text-sidebar-accent-foreground"
-                  />
+                  <SidebarLink link={link} className="text-primary" />
                 </Highlighter>
               ) : (
                 <SidebarLink key={idx} link={link} />
@@ -86,17 +86,9 @@ export default function AdminSidebar() {
         <div>
           <SidebarLink
             link={{
-              label: "Manu Arora",
+              label: user.fullName ?? `@${user.id}`,
               href: "#",
-              icon: (
-                <img
-                  src="https://assets.aceternity.com/manu.png"
-                  className="h-7 w-7 shrink-0 rounded-full"
-                  width={50}
-                  height={50}
-                  alt="Avatar"
-                />
-              ),
+              icon: <UserAvatar />,
             }}
           />
         </div>
