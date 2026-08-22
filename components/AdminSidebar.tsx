@@ -20,7 +20,7 @@ import { Separator } from "./ui/separator";
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { isLoaded, user } = useUser();
+  const { user } = useUser();
   const businessMenuItems = [
     {
       href: "/admin",
@@ -61,7 +61,6 @@ export default function AdminSidebar() {
     },
   ];
 
-  if (!isLoaded || !user) return;
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarBody className="h-screen justify-between gap-10 bg-sidebar">
@@ -86,7 +85,7 @@ export default function AdminSidebar() {
         <div>
           <SidebarLink
             link={{
-              label: user.fullName ?? `@${user.id}`,
+              label: user?.fullName ?? "User",
               href: "#",
               icon: <UserAvatar />,
             }}

@@ -15,3 +15,15 @@ export async function GET(request: NextRequest) {
   if (error) return NextResponse.json({ error }, { status: 500 });
   return NextResponse.json(data);
 }
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
+  const { data, error } = await supabase()
+    .from("businesses")
+    .upsert(body) // The upsert() method combines an INSERT and an UPDATE.
+    .select<"*", Business>();
+
+  if (error) return NextResponse.json({ error }, { status: 500 });
+  return NextResponse.json(data);
+}
