@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Attachment,
   AttachmentAction,
@@ -23,11 +25,20 @@ import {
   FieldLabel,
   FieldSet,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -36,30 +47,57 @@ import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { formatBytes } from "@/lib/utils";
-import { Business, ThemeSchema } from "@/types/feast";
+import { Business, GoogleFont, ThemeSchema } from "@/types/feast";
+import { useUser } from "@clerk/nextjs";
 import { FileImage, Pencil, Save, X } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { ChromePicker } from "react-color";
 import { useDropzone } from "react-dropzone";
+import { toast } from "sonner";
+import { z } from "zod";
+import FontPicker from "./FontPicker";
 import SettingsWarningIcon from "./SettingsWarningIcon";
 
-export default function BrandSettings({ business }: { business: Business }) {
+export default function BrandSettings({
+  business,
+  fonts,
+}: {
+  business: Business;
+  fonts: GoogleFont[];
+}) {
+  type Radius = z.infer<typeof ThemeSchema.shape.radius>;
+
   const { theme } = business;
   const {
     primary_logo_url,
     letter_spacing,
     primary_brand_color,
     secondary_brand_color,
+    primary_font,
+    secondary_font,
+    is_dark_mode_enabled,
   } = theme;
 
+  const { user } = useUser();
   const [logo, setLogo] = useState<File | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(primary_logo_url);
+
   const [primaryBrandColor, setPrimaryBrandColor] =
     useState(primary_brand_color);
   const [secondaryBrandColor, setSecondaryBrandColor] = useState(
-    secondary_brand_color,
+    secondary_brand_color ?? "",
+  );
+  const [primaryFont, setPrimaryFont] = useState<GoogleFont | null>(
+    primary_font ?? null,
+  );
+  const [secondaryFont, setSecondaryFont] = useState<GoogleFont | null>(
+    secondary_font ?? null,
   );
   const [letterSpacing, setLetterSpacing] = useState([letter_spacing]);
   const [padding, setPadding] = useState([theme.padding]);
+  const [radius, setRadius] = useState<Radius>(theme.radius);
+  const [isDarkModeEnabled, setIsDarkModeEnabled] =
+    useState(is_dark_mode_enabled);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,6 +125,47 @@ export default function BrandSettings({ business }: { business: Business }) {
     multiple: false,
   });
 
+  const handleSubmit = async () => {
+    const { id, category } = business;
+    const updated_at = new Date();
+
+    await setIsLoading(true);
+    await fetch("/api/businesses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([
+        {
+          id,
+          theme: {
+            primary_brand_color: primaryBrandColor,
+            secondary_brand_color: secondaryBrandColor,
+            primary_font: primaryFont,
+            secondary_font: secondaryFont,
+            letter_spacing: letterSpacing[0],
+            padding: padding[0],
+            radius,
+            is_dark_mode_enabled: isDarkModeEnabled,
+          },
+          updated_at,
+        },
+      ]),
+    })
+      .then(() => {
+        toast.success(
+          `Your ${category.toLowerCase()} has successfully updated.`,
+          { position: "bottom-right" },
+        );
+        setIsEditing(false);
+      })
+      .catch(() => {
+        toast.error(
+          `There was an issue updating your ${category.toLowerCase()}. Please try again.`,
+          { position: "bottom-right" },
+        );
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   return (
     <Card className="size-full flex flex-col">
       <CardHeader>
@@ -108,7 +187,7 @@ export default function BrandSettings({ business }: { business: Business }) {
                 variant="secondary"
                 size="icon-sm"
                 className="rounded-full"
-                onClick={() => {}}
+                onClick={handleSubmit}
                 disabled={isLoading}
               >
                 {isLoading ? <Spinner /> : <Save />}
@@ -136,51 +215,92 @@ export default function BrandSettings({ business }: { business: Business }) {
               <FieldLabel htmlFor="logo">
                 Logo <SettingsWarningIcon />
               </FieldLabel>
-              <span className="flex gap-2.5">
-                {/* Logo Preview */}
-                {logo && logoUrl && (
-                  <Attachment orientation="vertical">
-                    <AttachmentMedia variant="image">
-                      <img src={logoUrl} alt={logo.name} />
-                    </AttachmentMedia>
-                    <AttachmentContent>
-                      <AttachmentTitle>{logo.name}</AttachmentTitle>
-                      <AttachmentDescription>
-                        {logo.type.split("/")[1].toUpperCase()} ·{" "}
-                        {formatBytes(logo.size)}
-                      </AttachmentDescription>
-                    </AttachmentContent>
-                    <AttachmentActions>
-                      <AttachmentAction
-                        aria-label={`Remove ${logo.name}`}
-                        onClick={() => setLogo(null)}
-                      >
-                        <X />
-                      </AttachmentAction>
-                    </AttachmentActions>
-                  </Attachment>
-                )}
 
-                {/* Logo Upload Dropzone */}
-                <div
-                  {...getRootProps()}
-                  className={`w-full min-h-[163.5px] flex justify-center items-center group border border-dashed rounded-lg p-5 cursor-pointer transition ${isDragActive ? "border-primary bg-primary/15" : ""}`}
-                >
-                  <input {...getInputProps()} />
-                  <span className="flex flex-col justify-center items-center">
-                    <FileImage className="size-10 mb-2.5" />
-                    <p className="text-center text-md font-semibold">
-                      Drag & drop your logo or{" "}
-                      <span className="group-hover:underline">
-                        click to browse
-                      </span>
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      JPG, JPEG, PNG, or WEBP files
-                    </p>
-                  </span>
-                </div>
-              </span>
+              {isEditing ? (
+                <span className="flex gap-2.5">
+                  {/* Logo Preview */}
+                  {logo && logoUrl && (
+                    <Attachment orientation="vertical">
+                      <AttachmentMedia variant="image">
+                        <img src={logoUrl} alt={logo.name} />
+                      </AttachmentMedia>
+                      <AttachmentContent>
+                        <AttachmentTitle>{logo.name}</AttachmentTitle>
+                        <AttachmentDescription>
+                          {logo.type.split("/")[1].toUpperCase()} ·{" "}
+                          {formatBytes(logo.size)}
+                        </AttachmentDescription>
+                      </AttachmentContent>
+                      <AttachmentActions>
+                        <AttachmentAction
+                          aria-label={`Remove ${logo.name}`}
+                          onClick={() => setLogo(null)}
+                          disabled={!isEditing || isLoading}
+                        >
+                          <X />
+                        </AttachmentAction>
+                      </AttachmentActions>
+                    </Attachment>
+                  )}
+
+                  {/* Logo Upload Dropzone */}
+                  <div
+                    {...getRootProps()}
+                    className={`w-full min-h-[163.5px] flex justify-center items-center group border border-dashed rounded-lg p-5 cursor-pointer transition ${isDragActive ? "border-primary bg-primary/15" : ""} ${
+                      !isEditing || isLoading
+                        ? "bg-muted text-muted-foreground"
+                        : ""
+                    }`}
+                  >
+                    <input
+                      {...getInputProps()}
+                      disabled={!isEditing || isLoading}
+                    />
+                    <span
+                      className={`flex flex-col justify-center items-center ${
+                        !isEditing || isLoading
+                          ? "bg-muted text-muted-foreground"
+                          : ""
+                      }`}
+                    >
+                      <FileImage className="size-10 mb-2.5" />
+                      <p className="text-center text-md font-semibold">
+                        Drag & drop your logo or{" "}
+                        <span className="group-hover:underline">
+                          click to browse
+                        </span>
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        JPG, JPEG, PNG, or WEBP files
+                      </p>
+                    </span>
+                  </div>
+                </span>
+              ) : logoUrl ? (
+                <Attachment>
+                  <AttachmentMedia variant="image">
+                    <img src={logoUrl} alt={logoUrl} />
+                  </AttachmentMedia>
+                  <AttachmentContent>
+                    <AttachmentTitle>Your logo</AttachmentTitle>
+                    <AttachmentDescription>
+                      Looking good, {user ? user.firstName : business.name}!
+                    </AttachmentDescription>
+                  </AttachmentContent>
+                </Attachment>
+              ) : (
+                <Attachment>
+                  <AttachmentMedia variant="image">
+                    <FileImage />
+                  </AttachmentMedia>
+                  <AttachmentContent>
+                    <AttachmentTitle>No logo uploaded</AttachmentTitle>
+                    <AttachmentDescription>
+                      Add a logo to make your business stand out.
+                    </AttachmentDescription>
+                  </AttachmentContent>
+                </Attachment>
+              )}
             </Field>
 
             {/* Brand colors */}
@@ -188,66 +308,81 @@ export default function BrandSettings({ business }: { business: Business }) {
               {/* Primary brand color */}
               <Field>
                 <FieldLabel htmlFor="primary-brand-color">
-                  Brand color 1 <SettingsWarningIcon />
+                  Brand Color 1 <SettingsWarningIcon />
                 </FieldLabel>
-                <Input
-                  id="primary-brand-color"
-                  autoComplete="off"
-                  placeholder="#ff0000"
-                  value={primaryBrandColor}
-                  onChange={(e) => setPrimaryBrandColor(e.target.value)}
-                  disabled={!isEditing || isLoading}
-                  className="disabled:bg-muted"
-                />
+
+                <InputGroup
+                  className={!isEditing || isLoading ? "bg-muted" : ""}
+                >
+                  <InputGroupInput
+                    id="primary-brand-color"
+                    autoComplete="off"
+                    placeholder="#ff0000"
+                    value={primaryBrandColor}
+                    onChange={(e) => setPrimaryBrandColor(e.target.value)}
+                    disabled={!isEditing || isLoading}
+                    className="disabled:bg-muted"
+                  />
+                  <InputGroupAddon align="inline-start">
+                    <ColorPickerPopover
+                      color={primaryBrandColor}
+                      setColor={setPrimaryBrandColor}
+                      disabled={!isEditing || isLoading}
+                    />
+                  </InputGroupAddon>
+                </InputGroup>
               </Field>
 
               {/* Secondary brand color */}
               <Field>
                 <FieldLabel htmlFor="secondary-brand-color">
-                  Brand color 2 <SettingsWarningIcon />
+                  Brand Color 2 <SettingsWarningIcon />
                 </FieldLabel>
-                <Input
-                  id="secondary-brand-color"
-                  autoComplete="off"
-                  placeholder="#ff0000"
-                  value={secondaryBrandColor ?? ""}
-                  onChange={(e) => setSecondaryBrandColor(e.target.value)}
-                  disabled={!isEditing || isLoading}
-                  className="disabled:bg-muted"
-                />
+                <InputGroup
+                  className={!isEditing || isLoading ? "bg-muted" : ""}
+                >
+                  <InputGroupInput
+                    id="secondary-brand-color"
+                    autoComplete="off"
+                    placeholder="#ff0000"
+                    value={secondaryBrandColor ?? ""}
+                    onChange={(e) => setSecondaryBrandColor(e.target.value)}
+                    disabled={!isEditing || isLoading}
+                    className="disabled:bg-muted"
+                  />
+                  <InputGroupAddon align="inline-start">
+                    <ColorPickerPopover
+                      color={secondaryBrandColor ?? ""}
+                      setColor={setSecondaryBrandColor}
+                      disabled={!isEditing || isLoading}
+                    />
+                  </InputGroupAddon>
+                </InputGroup>
               </Field>
             </span>
 
             {/* Fonts */}
             <span className="grid max-w-sm grid-cols-2 gap-5">
               {/* Primary font */}
-              <Field className="w-full max-w-xs">
-                <FieldLabel>Primary font</FieldLabel>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a font" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="font-1">Font 1</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+              <Field className="w-full">
+                <FieldLabel>Primary Font</FieldLabel>
+                <FontPicker
+                  fonts={fonts}
+                  value={primaryFont}
+                  onChange={setPrimaryFont}
+                  disabled={!isEditing || isLoading}
+                />
               </Field>
 
               {/* Secondary font */}
-              <Field className="w-full max-w-xs">
-                <FieldLabel>Secondary font</FieldLabel>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a font" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="font-1">Font 1</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+              <Field className="w-full">
+                <FieldLabel>Secondary Font</FieldLabel>
+                <FontPicker
+                  fonts={fonts}
+                  value={secondaryFont}
+                  onChange={setSecondaryFont}
+                  disabled={!isEditing || isLoading}
+                />
               </Field>
             </span>
 
@@ -266,6 +401,7 @@ export default function BrandSettings({ business }: { business: Business }) {
                 min={-0.05}
                 max={0.05}
                 step={0.005}
+                disabled={!isEditing || isLoading}
               />
             </Field>
 
@@ -284,18 +420,26 @@ export default function BrandSettings({ business }: { business: Business }) {
                 min={0}
                 max={0.5}
                 step={0.01}
+                disabled={!isEditing || isLoading}
               />
             </Field>
 
-            {/* Corner radius & Dark mode */}
+            {/* Radius & Dark mode */}
             <span className="flex gap-5 justify-center items-start">
+              {/* Radius */}
               <Field>
                 <FieldLabel htmlFor="secondary-brand-color">
-                  Corner radius
+                  Corner Radius
                 </FieldLabel>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a font" />
+                <Select
+                  value={radius}
+                  onValueChange={(value) => setRadius(value as typeof radius)}
+                  disabled={!isEditing || isLoading}
+                >
+                  <SelectTrigger
+                    className={!isEditing || isLoading ? "bg-muted" : ""}
+                  >
+                    <SelectValue placeholder="Choose a size" />
                   </SelectTrigger>
                   <SelectContent>
                     {ThemeSchema.shape.radius.options.map((option, i) => (
@@ -307,10 +451,16 @@ export default function BrandSettings({ business }: { business: Business }) {
                 </Select>
               </Field>
 
+              {/* Dark mode */}
               <Field>
                 <FieldContent className="flex flex-row justify-between items-center">
-                  <FieldLabel htmlFor="dark-mode">Dark mode</FieldLabel>
-                  <Switch id="dark-mode" />
+                  <FieldLabel htmlFor="dark-mode">Dark Mode</FieldLabel>
+                  <Switch
+                    id="dark-mode"
+                    checked={isDarkModeEnabled}
+                    onCheckedChange={setIsDarkModeEnabled}
+                    disabled={!isEditing || isLoading}
+                  />
                 </FieldContent>
                 <FieldDescription className="text-xs">
                   If enabled, patrons can switch between light and dark mode.
@@ -321,5 +471,36 @@ export default function BrandSettings({ business }: { business: Business }) {
         </FieldSet>
       </CardContent>
     </Card>
+  );
+}
+
+function ColorPickerPopover({
+  color,
+  setColor,
+  disabled,
+}: {
+  color: string;
+  setColor: Dispatch<SetStateAction<string>>;
+  disabled: boolean;
+}) {
+  // const [open, setOpen] = useState(false);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <InputGroupButton
+          className={`size-5 p-0 ml-1.5 hover:scale-105 rounded-md`}
+          style={{ backgroundColor: color }}
+          disabled={disabled}
+        />
+      </PopoverTrigger>
+      <PopoverContent className="w-fit p-0 overflow-hidden">
+        <ChromePicker
+          color={color}
+          onChange={(color) => setColor(color.hex)}
+          disableAlpha
+          className="shadow-none! font-primary!"
+        />
+      </PopoverContent>
+    </Popover>
   );
 }

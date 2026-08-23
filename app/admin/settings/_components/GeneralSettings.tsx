@@ -40,12 +40,15 @@ export default function GeneralSettings({ business }: { business: Business }) {
 
   const handleSubmit = async () => {
     const { id, category } = business;
+    const updated_at = new Date();
 
     await setIsLoading(true);
     await fetch("/api/businesses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([{ id, name, tagline, description, phone, email }]),
+      body: JSON.stringify([
+        { id, name, tagline, description, phone, email, updated_at },
+      ]),
     })
       .then(() => {
         toast.success(
@@ -64,7 +67,7 @@ export default function GeneralSettings({ business }: { business: Business }) {
   };
 
   return (
-    <Card className="size-full">
+    <Card className="size-full flex flex-col">
       <CardHeader>
         <CardTitle className="font-secondary text-3xl">General</CardTitle>
         <CardAction className="flex gap-2">
@@ -104,114 +107,112 @@ export default function GeneralSettings({ business }: { business: Business }) {
           )}
         </CardAction>
       </CardHeader>
-      <CardContent>
-        <form>
-          <FieldSet>
-            <FieldGroup>
-              {/* Business name */}
+      <CardContent className="flex-1 min-h-0 overflow-y-auto">
+        <FieldSet>
+          <FieldGroup>
+            {/* Business name */}
+            <Field>
+              <FieldLabel htmlFor="business-name">
+                Business Name <SettingsWarningIcon />
+              </FieldLabel>
+              <Input
+                id="business-name"
+                autoComplete="off"
+                placeholder="Example Restaurant"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={!isEditing || isLoading}
+                className="disabled:bg-muted"
+              />
+            </Field>
+
+            {/* Tagline */}
+            <Field>
+              <FieldLabel htmlFor="tagline">Tagline</FieldLabel>
+              <Input
+                id="tagline"
+                autoComplete="off"
+                placeholder="Lorem ipsum dolor sit amet..."
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                disabled={!isEditing || isLoading}
+                className="disabled:bg-muted"
+              />
+              <FieldDescription className="text-xs">
+                A short and sweet tagline.
+              </FieldDescription>
+            </Field>
+
+            {/* Description */}
+            <Field>
+              <FieldLabel htmlFor="description">
+                Description <SettingsWarningIcon />
+              </FieldLabel>
+              <Textarea
+                id="description"
+                autoComplete="off"
+                placeholder="Lorem ipsum dolor sit amet..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={!isEditing || isLoading}
+                className="disabled:bg-muted"
+              />
+              <FieldDescription className="text-xs">
+                A more detailed description for your business.
+              </FieldDescription>
+            </Field>
+
+            {/* Phone & Email */}
+            <span className="grid max-w-sm grid-cols-2 gap-5">
               <Field>
-                <FieldLabel htmlFor="business-name">
-                  Business name <SettingsWarningIcon />
-                </FieldLabel>
+                <FieldLabel htmlFor="phone">Phone</FieldLabel>
                 <Input
-                  id="business-name"
+                  id="phone"
+                  type="tel"
                   autoComplete="off"
-                  placeholder="Example Restaurant"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  placeholder="+1 (773) 555-0100"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   disabled={!isEditing || isLoading}
                   className="disabled:bg-muted"
                 />
               </Field>
-
-              {/* Tagline */}
               <Field>
-                <FieldLabel htmlFor="tagline">Tagline</FieldLabel>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
-                  id="tagline"
+                  id="email"
                   autoComplete="off"
-                  placeholder="Lorem ipsum dolor sit amet..."
-                  value={tagline}
-                  onChange={(e) => setTagline(e.target.value)}
-                  disabled={!isEditing || isLoading}
-                  className="disabled:bg-muted"
-                />
-                <FieldDescription className="text-xs">
-                  A short and sweet tagline.
-                </FieldDescription>
-              </Field>
-
-              {/* Description */}
-              <Field>
-                <FieldLabel htmlFor="description">
-                  Description <SettingsWarningIcon />
-                </FieldLabel>
-                <Textarea
-                  id="description"
-                  autoComplete="off"
-                  placeholder="Lorem ipsum dolor sit amet..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  disabled={!isEditing || isLoading}
-                  className="disabled:bg-muted"
-                />
-                <FieldDescription className="text-xs">
-                  A more detailed description for your business.
-                </FieldDescription>
-              </Field>
-
-              {/* Phone & Email */}
-              <span className="grid max-w-sm grid-cols-2 gap-5">
-                <Field>
-                  <FieldLabel htmlFor="phone">Phone</FieldLabel>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    autoComplete="off"
-                    placeholder="+1 (773) 555-0100"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={!isEditing || isLoading}
-                    className="disabled:bg-muted"
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
-                    id="email"
-                    autoComplete="off"
-                    type="email"
-                    placeholder="info@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={!isEditing || isLoading}
-                    className="disabled:bg-muted"
-                  />
-                </Field>
-              </span>
-
-              {/* Business address */}
-              <Field>
-                <FieldLabel htmlFor="address">Business address</FieldLabel>
-                <Input
-                  id="address"
-                  autoComplete="off"
-                  placeholder="123 N Main St, Chicago, IL 60600"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  type="email"
+                  placeholder="info@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={!isEditing || isLoading}
                   className="disabled:bg-muted"
                 />
               </Field>
+            </span>
 
-              {/* <Field>
+            {/* Business address */}
+            <Field>
+              <FieldLabel htmlFor="address">Business Address</FieldLabel>
+              <Input
+                id="address"
+                autoComplete="off"
+                placeholder="123 N Main St, Chicago, IL 60600"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                disabled={!isEditing || isLoading}
+                className="disabled:bg-muted"
+              />
+            </Field>
+
+            {/* <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
               <Input id="username" autoComplete="off" aria-invalid />
               <FieldError></FieldError>
             </Field> */}
-            </FieldGroup>
-          </FieldSet>
-        </form>
+          </FieldGroup>
+        </FieldSet>
       </CardContent>
     </Card>
   );

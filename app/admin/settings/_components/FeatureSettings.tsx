@@ -10,12 +10,12 @@ import { Business } from "@/types/feast";
 
 export default function FeatureSettings({ business }: { business: Business }) {
   return (
-    <Card className="size-full">
+    <Card className="size-full flex flex-col">
       <CardHeader>
         <CardTitle className="font-secondary text-3xl">Features</CardTitle>
         <CardDescription>Your website's features.</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-10 overflow-y-scroll">
+      <CardContent className="flex-1 min-h-0 overflow-y-auto">
         <span className="w-full flex flex-col">
           <h3 className="font-secondary text-xl">Patrons</h3>
           <p>Supported languages</p>
