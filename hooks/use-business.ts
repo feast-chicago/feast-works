@@ -51,7 +51,7 @@ export function useBusiness(): UseBusinessReturn {
     };
 
     fetchBusiness();
-  }, [isLoaded, user]);
+  }, [isLoaded]);
 
   return { business, role, isLoading, error };
 }

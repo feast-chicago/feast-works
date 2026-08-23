@@ -8,6 +8,7 @@ import {
   ChartBarBig,
   CreditCard,
   House,
+  LayoutPanelLeft,
   Settings2,
   UsersRound,
 } from "lucide-react";
@@ -26,6 +27,11 @@ export default function AdminSidebar() {
       href: "/admin",
       icon: <House className="size-5 shrink-0" />,
       label: "Home",
+    },
+    {
+      href: "/admin/builder",
+      icon: <LayoutPanelLeft className="size-5 shrink-0" />,
+      label: "Builder",
     },
     {
       href: "/admin/users",
