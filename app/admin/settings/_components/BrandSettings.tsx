@@ -1,5 +1,6 @@
 "use client";
 
+import { uploadLogo } from "@/actions/business";
 import {
   Attachment,
   AttachmentAction,
@@ -47,7 +48,7 @@ import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { formatBytes } from "@/lib/utils";
-import { Business, GoogleFont, ThemeSchema } from "@/types/feast";
+import { Business, GoogleFont, Theme, ThemeSchema } from "@/types/feast";
 import { useUser } from "@clerk/nextjs";
 import { FileImage, Pencil, Save, X } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -130,13 +131,17 @@ export default function BrandSettings({
     const updated_at = new Date();
 
     await setIsLoading(true);
-    await fetch("/api/businesses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([
-        {
-          id,
-          theme: {
+
+    if (logo && primaryFont && secondaryFont) {
+      const logoPath = `${business.id}/logo-1`;
+      await uploadLogo(logo, logoPath)
+        .then((image) => {
+          const primary_logo_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${image.fullPath}`;
+
+          const theme: Theme = {
+            platform_theme: business.theme.platform_theme,
+            primary_logo_url,
+            secondary_logo_url: null,
             primary_brand_color: primaryBrandColor,
             secondary_brand_color: secondaryBrandColor,
             primary_font: primaryFont,
@@ -145,25 +150,29 @@ export default function BrandSettings({
             padding: padding[0],
             radius,
             is_dark_mode_enabled: isDarkModeEnabled,
-          },
-          updated_at,
-        },
-      ]),
-    })
-      .then(() => {
-        toast.success(
-          `Your ${category.toLowerCase()} has successfully updated.`,
-          { position: "bottom-right" },
-        );
-        setIsEditing(false);
-      })
-      .catch(() => {
-        toast.error(
-          `There was an issue updating your ${category.toLowerCase()}. Please try again.`,
-          { position: "bottom-right" },
-        );
-      })
-      .finally(() => setIsLoading(false));
+          };
+
+          fetch("/api/businesses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ id, theme, updated_at }]),
+          });
+        })
+        .then(() => {
+          toast.success(
+            `Your ${category.toLowerCase()} has successfully updated.`,
+            { position: "bottom-right" },
+          );
+          setIsEditing(false);
+        })
+        .catch(() => {
+          toast.error(
+            `There was an issue updating your ${category.toLowerCase()}. Please try again.`,
+            { position: "bottom-right" },
+          );
+        })
+        .finally(() => setIsLoading(false));
+    }
   };
 
   return (
@@ -227,8 +236,8 @@ export default function BrandSettings({
                       <AttachmentContent>
                         <AttachmentTitle>{logo.name}</AttachmentTitle>
                         <AttachmentDescription>
-                          {logo.type.split("/")[1].toUpperCase()} ·{" "}
-                          {formatBytes(logo.size)}
+                          {logo.type.split("/")[1].split("+")[0].toUpperCase()}{" "}
+                          · {formatBytes(logo.size)}
                         </AttachmentDescription>
                       </AttachmentContent>
                       <AttachmentActions>
@@ -266,7 +275,7 @@ export default function BrandSettings({
                       <FileImage className="size-10 mb-2.5" />
                       <p className="text-center text-md font-semibold">
                         Drag & drop your logo or{" "}
-                        <span className="group-hover:underline">
+                        <span className="text-secondary group-hover:underline">
                           click to browse
                         </span>
                       </p>
