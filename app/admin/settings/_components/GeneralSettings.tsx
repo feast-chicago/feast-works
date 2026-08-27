@@ -16,10 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { Business } from "@/types/feast";
+import { Address, Business } from "@/types/feast";
 import { Pencil, Save, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import AddressPicker from "./AddressPicker";
 import SettingsWarningIcon from "./SettingsWarningIcon";
 
 export default function GeneralSettings({ business }: { business: Business }) {
@@ -28,17 +29,40 @@ export default function GeneralSettings({ business }: { business: Business }) {
   const [description, setDescription] = useState(
     business.description ?? undefined,
   );
-  const [phone, setPhone] = useState(business.phone);
+  const [phone, setPhone] = useState(formatPhoneNumberAsString(business.phone));
   const [email, setEmail] = useState(business.email);
 
-  const { line_1, line_2, city, state, zip_code } = business.business_address;
-  const [address, setAddress] = useState(
-    `${[line_1, line_2].filter((el) => el !== "").join(" ")}, ${city}, ${state} ${zip_code}`,
+  const { formatted_address } = business.business_address[0];
+  const [address, setAddress] = useState(formatted_address);
+  const [addressObject, setAddressObject] = useState<Address[]>(
+    business.business_address,
   );
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  function formatPhoneNumberAsString(value: string | number): string {
+    // Strip everything that isn't a digit
+    const digits = String(value).replace(/\D/g, "");
+
+    // Format as +1 (XXX) XXX-XXXX
+    if (digits.length === 0) return "";
+    if (digits.length <= 1) return `+${digits}`;
+    if (digits.length <= 4) return `+${digits[0]} (${digits.slice(1)}`;
+    if (digits.length <= 7)
+      return `+${digits[0]} (${digits.slice(1, 4)}) ${digits.slice(4)}`;
+    if (digits.length <= 11)
+      return `+${digits[0]} (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 11)}`;
+
+    // Cap at 11 digits (+1 and 10-digit number)
+    return `+${digits[0]} (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 11)}`;
+  }
+
+  function formatNumberAsDigits(value: string | number): number {
+    const digits = String(value).replace(/\D/g, "");
+    return parseInt(digits);
+  }
+
+  async function handleSubmit() {
     const { id, category } = business;
     const updated_at = new Date();
 
@@ -47,7 +71,16 @@ export default function GeneralSettings({ business }: { business: Business }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify([
-        { id, name, tagline, description, phone, email, updated_at },
+        {
+          id,
+          name,
+          tagline,
+          description,
+          business_address: addressObject,
+          phone: formatNumberAsDigits(phone),
+          email,
+          updated_at,
+        },
       ]),
     })
       .then(() => {
@@ -64,7 +97,7 @@ export default function GeneralSettings({ business }: { business: Business }) {
         );
       })
       .finally(() => setIsLoading(false));
-  };
+  }
 
   return (
     <Card className="size-full flex flex-col">
@@ -162,6 +195,18 @@ export default function GeneralSettings({ business }: { business: Business }) {
               </FieldDescription>
             </Field>
 
+            {/* Address(es) */}
+            <Field>
+              <FieldLabel htmlFor="address">Address</FieldLabel>
+              <AddressPicker
+                input={address}
+                setInput={setAddress}
+                object={addressObject}
+                setObject={setAddressObject}
+                disabled={!isEditing || isLoading}
+              />
+            </Field>
+
             {/* Phone & Email */}
             <span className="grid max-w-sm grid-cols-2 gap-5">
               <Field>
@@ -172,7 +217,9 @@ export default function GeneralSettings({ business }: { business: Business }) {
                   autoComplete="off"
                   placeholder="+1 (773) 555-0100"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) =>
+                    setPhone(formatPhoneNumberAsString(e.target.value))
+                  }
                   disabled={!isEditing || isLoading}
                   className="disabled:bg-muted"
                 />
@@ -191,20 +238,6 @@ export default function GeneralSettings({ business }: { business: Business }) {
                 />
               </Field>
             </span>
-
-            {/* Business address */}
-            <Field>
-              <FieldLabel htmlFor="address">Business Address</FieldLabel>
-              <Input
-                id="address"
-                autoComplete="off"
-                placeholder="123 N Main St, Chicago, IL 60600"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                disabled={!isEditing || isLoading}
-                className="disabled:bg-muted"
-              />
-            </Field>
 
             {/* <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
