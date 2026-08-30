@@ -1,10 +1,16 @@
-// _components/Builder.tsx
 "use client";
 
 import { updateLayout } from "@/actions/layout";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { Layout, PageComponent } from "@/types/feast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DEFAULT_PROPS,
+  PAGE_KEYS,
+  PageComponent,
+  PageKey,
+  SiteLayout,
+} from "@/types/feast";
 import {
   closestCenter,
   DndContext,
@@ -19,61 +25,78 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import Canvas from "./Canvas";
 import ComponentPalette from "./ComponentPalette";
+import PropsPanel from "./PropsPanel";
 
 export default function Builder({
   initialLayout,
   businessId,
 }: {
-  initialLayout: Layout;
+  initialLayout: SiteLayout;
   businessId: string;
 }) {
-  const [layout, setLayout] = useState<Layout>(initialLayout);
+  const [layout, setLayout] = useState<SiteLayout>(initialLayout);
+  const [activePage, setActivePage] = useState<PageKey>("home");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  const pageLayout = layout[activePage];
+  const selected = pageLayout.find((c) => c.id === selectedId) ?? null;
+
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 }, // prevents accidental drags
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
+
+  function updatePage(
+    page: PageKey,
+    updater: (prev: PageComponent[]) => PageComponent[],
+  ) {
+    setLayout((prev) => ({ ...prev, [page]: updater(prev[page]) }));
+  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-
-    setLayout((prev) => {
+    updatePage(activePage, (prev) => {
       const oldIndex = prev.findIndex((c) => c.id === active.id);
       const newIndex = prev.findIndex((c) => c.id === over.id);
       return arrayMove(prev, oldIndex, newIndex);
     });
   }
 
+  // Fix issue 1 — handleAdd now works with default props
   function handleAdd(type: PageComponent["type"]) {
     const newComponent: PageComponent = {
       id: `${type}-${Date.now()}`,
       type,
       visible: true,
+      props: DEFAULT_PROPS[type] as any,
     };
-    setLayout((prev) => [...prev, newComponent]);
+    updatePage(activePage, (prev) => [...prev, newComponent]);
+    setSelectedId(newComponent.id);
+  }
+
+  function handlePropsChange(id: string, newProps: Record<string, unknown>) {
+    updatePage(activePage, (prev) =>
+      prev.map((c) => (c.id === id ? { ...c, props: newProps } : c)),
+    );
   }
 
   function handleToggleVisible(id: string) {
-    setLayout((prev) =>
+    updatePage(activePage, (prev) =>
       prev.map((c) => (c.id === id ? { ...c, visible: !c.visible } : c)),
     );
   }
 
   function handleRemove(id: string) {
-    setLayout((prev) => prev.filter((c) => c.id !== id));
+    updatePage(activePage, (prev) => prev.filter((c) => c.id !== id));
+    if (selectedId === id) setSelectedId(null);
   }
 
   function handleSave() {
     startTransition(async () => {
       const error = await updateLayout(businessId, layout);
-      if (error) {
-        toast.error("Failed to save layout.");
-      } else {
-        toast.success("Layout saved.");
-      }
+      if (error) toast.error("Failed to save layout.");
+      else toast.success("Layout saved.");
     });
   }
 
@@ -81,26 +104,53 @@ export default function Builder({
     <div className="flex gap-8">
       {/* Sidebar */}
       <aside className="w-72 shrink-0 flex flex-col gap-6">
-        <ComponentPalette
-          onAdd={handleAdd}
-          existingTypes={layout.map((c) => c.type)}
-        />
+        {selected ? (
+          <PropsPanel
+            component={selected}
+            onChange={(newProps) => handlePropsChange(selected.id, newProps)}
+            onClose={() => setSelectedId(null)}
+          />
+        ) : (
+          <ComponentPalette onAdd={handleAdd} />
+        )}
       </aside>
 
       {/* Canvas */}
       <div className="flex-1 flex flex-col gap-4">
-        <p>Menu page | Catering page | Shop page | About page | Gallery page</p>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
+        {/* Fix issue 4 — page tabs */}
+        <Tabs
+          value={activePage}
+          onValueChange={(v) => {
+            setActivePage(v as PageKey);
+            setSelectedId(null);
+          }}
         >
-          <Canvas
-            layout={layout}
-            onToggleVisible={handleToggleVisible}
-            onRemove={handleRemove}
-          />
-        </DndContext>
+          <TabsList>
+            {PAGE_KEYS.map((page) => (
+              <TabsTrigger key={page} value={page} className="capitalize">
+                {page}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {PAGE_KEYS.map((page) => (
+            <TabsContent key={page} value={page}>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <Canvas
+                  layout={layout[page]}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                  onToggleVisible={handleToggleVisible}
+                  onRemove={handleRemove}
+                />
+              </DndContext>
+            </TabsContent>
+          ))}
+        </Tabs>
 
         <Button
           variant="secondary"

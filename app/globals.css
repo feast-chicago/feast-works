@@ -220,4 +220,7 @@
   html {
     @apply font-sans;
   }
+  .uppercase-text {
+    @apply text-xs font-medium text-muted-foreground uppercase tracking-widest;
+  }
 }

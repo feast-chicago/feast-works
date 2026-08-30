@@ -1,14 +1,13 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
-import { Layout, LayoutSchema } from "@/types/feast";
+import { SiteLayout, SiteLayoutSchema } from "@/types/feast";
 
 export async function updateLayout(
   businessId: string,
-  layout: Layout,
+  layout: SiteLayout,
 ): Promise<string | null> {
-  // Validate before writing.
-  const parsed = LayoutSchema.safeParse(layout);
+  const parsed = SiteLayoutSchema.safeParse(layout);
   if (!parsed.success) return "Invalid layout data.";
 
   const { error } = await supabase()

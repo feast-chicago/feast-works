@@ -1,67 +1,82 @@
 "use client";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PageComponent } from "@/types/feast";
+import { AlignLeft, Clock, MapPin, MessageSquare, Minus } from "lucide-react";
 
 const AVAILABLE_COMPONENTS: {
   type: PageComponent["type"];
   label: string;
   description: string;
+  icon: React.ReactNode;
 }[] = [
-  { type: "hero", label: "Hero", description: "Full-width intro section" },
-  { type: "menu", label: "Menu", description: "Your food and drink menu" },
-  { type: "hours", label: "Hours", description: "Operating hours" },
-  { type: "gallery", label: "Gallery", description: "Photo gallery" },
   {
-    type: "testimonials",
-    label: "Testimonials",
+    type: "text",
+    label: "Text",
+    description: "Heading, body text, button, or link",
+    icon: <AlignLeft className="size-5" />,
+  },
+  {
+    type: "hours",
+    label: "Hours",
+    description: "Operating hours and contact info",
+    icon: <Clock className="size-5" />,
+  },
+  {
+    type: "reviews",
+    label: "Reviews",
     description: "Customer reviews",
+    icon: <MessageSquare className="size-5" />,
   },
   {
-    type: "cta",
-    label: "Call to Action",
-    description: "Prompt visitors to act",
+    type: "map",
+    label: "Map",
+    description: "Your location on a map",
+    icon: <MapPin className="size-5" />,
   },
-  { type: "map", label: "Map", description: "Your location on a map" },
-  { type: "about", label: "About", description: "Your story" },
   {
-    type: "catering",
-    label: "Catering",
-    description: "Catering inquiry section",
+    type: "divider",
+    label: "Divider",
+    description: "A visual break between sections",
+    icon: <Minus className="size-5" />,
   },
-  { type: "shop", label: "Shop", description: "Merchandise section" },
 ];
 
 export default function ComponentPalette({
   onAdd,
-  existingTypes,
 }: {
   onAdd: (type: PageComponent["type"]) => void;
-  existingTypes: PageComponent["type"][];
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-2">
+    <div className="flex flex-col gap-3">
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
         Add a section
       </p>
-      {AVAILABLE_COMPONENTS.map(({ type, label, description }) => {
-        const alreadyAdded = existingTypes.includes(type);
-        return (
-          <button
-            key={type}
-            onClick={() => !alreadyAdded && onAdd(type)}
-            disabled={alreadyAdded}
-            className={`text-left p-3 rounded-lg border transition-colors
-              ${
-                alreadyAdded
-                  ? "opacity-40 cursor-not-allowed border-border"
-                  : "border-border hover:border-primary hover:bg-primary/5 cursor-pointer"
-              }`}
-          >
-            <p className="text-sm font-medium">{label}</p>
-            <p className="text-xs text-muted-foreground">{description}</p>
-          </button>
-        );
-      })}
+      {/* Fix issue 2 — 2-column grid */}
+      <div className="grid grid-cols-2 gap-2">
+        {AVAILABLE_COMPONENTS.map(({ type, label, description, icon }) => (
+          <Tooltip key={type}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => onAdd(type)}
+                className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-colors text-center"
+              >
+                <span className="text-muted-foreground">{icon}</span>
+                <span className="text-xs font-medium leading-tight">
+                  {label}
+                </span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{description}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
     </div>
   );
 }
