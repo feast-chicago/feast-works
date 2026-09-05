@@ -6,7 +6,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PageComponent } from "@/types/feast";
-import { AlignLeft, Clock, MapPin, MessageSquare, Minus } from "lucide-react";
+import {
+  Clock,
+  HeartPlus,
+  Image,
+  MapPin,
+  MessageSquareHeart,
+  SquareDashedMousePointer,
+  TextAlignStart,
+  Type,
+  UnfoldVertical,
+} from "lucide-react";
 
 const AVAILABLE_COMPONENTS: {
   type: PageComponent["type"];
@@ -15,34 +25,58 @@ const AVAILABLE_COMPONENTS: {
   icon: React.ReactNode;
 }[] = [
   {
+    type: "header",
+    label: "Header",
+    description: "Heading",
+    icon: <Type className="size-7" />,
+  },
+  {
     type: "text",
     label: "Text",
-    description: "Heading, body text, button, or link",
-    icon: <AlignLeft className="size-5" />,
+    description: "Body text",
+    icon: <TextAlignStart className="size-7" />,
+  },
+  {
+    type: "image",
+    label: "Image",
+    description: "",
+    icon: <Image className="size-7" />,
+  },
+  {
+    type: "button",
+    label: "Button",
+    description: "",
+    icon: <SquareDashedMousePointer className="size-7" />,
   },
   {
     type: "hours",
     label: "Hours",
     description: "Operating hours and contact info",
-    icon: <Clock className="size-5" />,
+    icon: <Clock className="size-7" />,
   },
   {
     type: "reviews",
-    label: "Reviews",
+    label: "Review",
     description: "Customer reviews",
-    icon: <MessageSquare className="size-5" />,
+    icon: <MessageSquareHeart className="size-7" />,
+  },
+  {
+    type: "social",
+    label: "Social",
+    description: "",
+    icon: <HeartPlus className="size-7" />,
   },
   {
     type: "map",
     label: "Map",
     description: "Your location on a map",
-    icon: <MapPin className="size-5" />,
+    icon: <MapPin className="size-7" />,
   },
   {
     type: "divider",
     label: "Divider",
     description: "A visual break between sections",
-    icon: <Minus className="size-5" />,
+    icon: <UnfoldVertical className="size-7" />,
   },
 ];
 
@@ -57,7 +91,7 @@ export default function ComponentPalette({
         Add a section
       </p>
       {/* Fix issue 2 — 2-column grid */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {AVAILABLE_COMPONENTS.map(({ type, label, description, icon }) => (
           <Tooltip key={type}>
             <TooltipTrigger asChild>

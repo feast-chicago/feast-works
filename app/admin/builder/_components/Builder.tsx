@@ -63,12 +63,11 @@ export default function Builder({
     });
   }
 
-  // Fix issue 1 — handleAdd now works with default props
   function handleAdd(type: PageComponent["type"]) {
     const newComponent: PageComponent = {
       id: `${type}-${Date.now()}`,
       type,
-      visible: true,
+      isVisible: true,
       props: DEFAULT_PROPS[type] as any,
     };
     updatePage(activePage, (prev) => [...prev, newComponent]);
@@ -83,7 +82,11 @@ export default function Builder({
 
   function handleToggleVisible(id: string) {
     updatePage(activePage, (prev) =>
-      prev.map((c) => (c.id === id ? { ...c, visible: !c.visible } : c)),
+      prev.map((component) =>
+        component.id === id
+          ? { ...component, visible: !component.isVisible }
+          : component,
+      ),
     );
   }
 
@@ -101,9 +104,9 @@ export default function Builder({
   }
 
   return (
-    <div className="flex gap-8">
-      {/* Sidebar */}
-      <aside className="w-72 shrink-0 flex flex-col gap-6">
+    <div className="flex gap-6">
+      {/* Left sidebar */}
+      <aside className="w-64 shrink-0 flex flex-col gap-4">
         {selected ? (
           <PropsPanel
             component={selected}
@@ -115,9 +118,8 @@ export default function Builder({
         )}
       </aside>
 
-      {/* Canvas */}
-      <div className="flex-1 flex flex-col gap-4">
-        {/* Fix issue 4 — page tabs */}
+      {/* Canvas area */}
+      <div className="flex-1 flex flex-col gap-4 min-w-0">
         <Tabs
           value={activePage}
           onValueChange={(v) => {
@@ -125,16 +127,28 @@ export default function Builder({
             setSelectedId(null);
           }}
         >
-          <TabsList>
-            {PAGE_KEYS.map((page) => (
-              <TabsTrigger key={page} value={page} className="capitalize">
-                {page}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <div className="flex items-center justify-between">
+            <TabsList>
+              {PAGE_KEYS.map((page) => (
+                <TabsTrigger key={page} value={page} className="capitalize">
+                  {page}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            <Button
+              variant="secondary"
+              onClick={handleSave}
+              disabled={isPending}
+              size="sm"
+            >
+              {isPending ? <Spinner /> : <Save className="size-4" />}
+              {isPending ? "Saving..." : "Save"}
+            </Button>
+          </div>
 
           {PAGE_KEYS.map((page) => (
-            <TabsContent key={page} value={page}>
+            <TabsContent key={page} value={page} className="mt-4">
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -146,21 +160,12 @@ export default function Builder({
                   onSelect={setSelectedId}
                   onToggleVisible={handleToggleVisible}
                   onRemove={handleRemove}
+                  onPropsChange={handlePropsChange}
                 />
               </DndContext>
             </TabsContent>
           ))}
         </Tabs>
-
-        <Button
-          variant="secondary"
-          onClick={handleSave}
-          disabled={isPending}
-          className="self-end"
-        >
-          {isPending ? <Spinner /> : <Save />}
-          {isPending ? "Saving..." : "Save"}
-        </Button>
       </div>
     </div>
   );
