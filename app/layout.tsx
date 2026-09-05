@@ -1,21 +1,10 @@
+import { Providers } from "@/components/ui/providers";
 import { primaryFont, secondaryFont } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "@/components/ui/providers";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -38,6 +27,8 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-dvh flex flex-col grow bg-background">
+        <Analytics />
+        <SpeedInsights />
         <Providers>{children}</Providers>
       </body>
     </html>

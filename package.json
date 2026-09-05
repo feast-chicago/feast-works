@@ -17,6 +17,8 @@
     "@lottiefiles/dotlottie-react": "^0.19.15",
     "@supabase/supabase-js": "^2.112.3",
     "@tabler/icons-react": "^3.46.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
