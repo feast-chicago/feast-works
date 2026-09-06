@@ -7,7 +7,7 @@ import {
   PageComponent,
   TextProps,
 } from "@/types/feast";
-import { ImageIcon, MapPin, ShoppingBag, Star } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { InlineEdit } from "./InlineEdit";
 
 // ── shared types ────────────────────────────────────────────────────
@@ -29,7 +29,7 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
         : "text-left items-start";
 
   return (
-    <section className={`px-8 py-12 flex flex-col gap-4 ${alignClass}`}>
+    <section className={`p-1 flex flex-col gap-4 ${alignClass}`}>
       {props.heading !== null && (
         <InlineEdit
           as={HeadingTag}

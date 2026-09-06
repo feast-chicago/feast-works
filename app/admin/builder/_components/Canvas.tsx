@@ -1,6 +1,8 @@
+// update Canvas.tsx
 "use client";
 
 import { PageComponent } from "@/types/feast";
+import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -23,15 +25,33 @@ export default function Canvas({
   onRemove: (id: string) => void;
   onPropsChange: (id: string, newProps: Record<string, unknown>) => void;
 }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: "canvas-drop-zone",
+    data: { source: "canvas" },
+  });
+
   return (
-    <div className="flex flex-col gap-3 p-6 min-h-96 bg-muted/20 rounded-xl border border-dashed border-border/60">
+    <div
+      ref={setNodeRef}
+      className={`
+        flex flex-col gap-3 p-6 min-h-96 rounded-xl border border-dashed
+        transition-colors duration-150
+        ${
+          isOver
+            ? "border-primary bg-primary/5"
+            : "border-border/60 bg-muted/20"
+        }
+      `}
+    >
       {layout.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-2 py-20 text-center">
           <p className="text-sm text-muted-foreground">
-            Add sections from the left panel
+            {isOver
+              ? "Drop to add section"
+              : "Add sections from the left panel"}
           </p>
           <p className="text-xs text-muted-foreground/60">
-            Drag to reorder · Double-click text to edit inline
+            Drag from palette or click to add · Double-click text to edit
           </p>
         </div>
       ) : (
@@ -41,7 +61,6 @@ export default function Canvas({
         >
           {layout.map((component) => {
             const Block = BLOCK_MAP[component.type];
-
             return (
               <BuilderBlock
                 key={component.id}
@@ -59,7 +78,6 @@ export default function Canvas({
                     }
                   />
                 ) : (
-                  // fallback for component types without a block yet
                   <div className="px-8 py-10 bg-muted/30 rounded-lg flex items-center justify-center">
                     <p className="text-sm text-muted-foreground capitalize">
                       {component.type.replace(/_/g, " ")} section
@@ -69,6 +87,11 @@ export default function Canvas({
               </BuilderBlock>
             );
           })}
+
+          {/* drop indicator at the bottom when dragging from palette */}
+          {isOver && (
+            <div className="h-1 rounded-full bg-primary animate-pulse" />
+          )}
         </SortableContext>
       )}
     </div>

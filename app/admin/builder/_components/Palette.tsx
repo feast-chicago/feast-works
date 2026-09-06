@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PageComponent } from "@/types/feast";
+import { useDraggable } from "@dnd-kit/core";
 import {
   Clock,
   HeartPlus,
@@ -80,7 +81,7 @@ const AVAILABLE_COMPONENTS: {
   },
 ];
 
-export default function ComponentPalette({
+export default function Palette({
   onAdd,
 }: {
   onAdd: (type: PageComponent["type"]) => void;
@@ -93,24 +94,63 @@ export default function ComponentPalette({
       {/* Fix issue 2 — 2-column grid */}
       <div className="grid grid-cols-3 gap-3">
         {AVAILABLE_COMPONENTS.map(({ type, label, description, icon }) => (
-          <Tooltip key={type}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => onAdd(type)}
-                className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-colors text-center"
-              >
-                <span className="text-muted-foreground">{icon}</span>
-                <span className="text-xs font-medium leading-tight">
-                  {label}
-                </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>{description}</p>
-            </TooltipContent>
-          </Tooltip>
+          <PaletteItem
+            key={type}
+            type={type}
+            label={label}
+            description={description}
+            icon={icon}
+            onAdd={onAdd}
+          />
         ))}
       </div>
     </div>
+  );
+}
+
+function PaletteItem({
+  type,
+  label,
+  description,
+  icon,
+  onAdd,
+}: {
+  type: PageComponent["type"];
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+  onAdd: (type: PageComponent["type"]) => void;
+}) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `palette-${type}`,
+    data: {
+      source: "palette",
+      type,
+    },
+  });
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          ref={setNodeRef}
+          {...listeners}
+          {...attributes}
+          onClick={() => onAdd(type)}
+          className={`
+            flex flex-col items-center gap-2 p-3 rounded-lg border
+            border-border hover:border-primary hover:bg-primary/5
+            transition-colors text-center touch-none
+            ${isDragging ? "opacity-40" : ""}
+          `}
+        >
+          <span className="text-muted-foreground">{icon}</span>
+          <span className="text-xs font-medium leading-tight">{label}</span>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>{description}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
