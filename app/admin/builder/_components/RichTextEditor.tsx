@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { TextProps } from "@/types/feast";
+import { TextProps } from "@/schema";
 
 export default function RichTextEditor({
   props,

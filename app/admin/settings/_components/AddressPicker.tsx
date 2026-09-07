@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Address } from "@/types/feast";
+import { Address } from "@/schema";
 import { PlaceAutocompleteResult } from "@googlemaps/google-maps-services-js";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 

@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Business } from "@/types/feast";
+import { Business } from "@/schema";
 
 export default function IntegrationSettings({
   business,

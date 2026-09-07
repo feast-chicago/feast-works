@@ -1,4 +1,4 @@
-import { PageComponent } from "@/types/feast";
+import { PageComponent } from "@/schema";
 import { X } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
 

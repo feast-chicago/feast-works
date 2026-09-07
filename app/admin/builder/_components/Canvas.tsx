@@ -1,7 +1,7 @@
 // update Canvas.tsx
 "use client";
 
-import { PageComponent } from "@/types/feast";
+import { PageComponent } from "@/schema";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,

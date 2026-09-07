@@ -1,7 +1,7 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
-import { SiteLayout, SiteLayoutSchema } from "@/types/feast";
+import { SiteLayout, SiteLayoutSchema } from "@/schema";
 
 export async function updateLayout(
   businessId: string,

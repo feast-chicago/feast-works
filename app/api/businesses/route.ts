@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Business } from "@/types/feast";
+import { Business } from "@/schema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

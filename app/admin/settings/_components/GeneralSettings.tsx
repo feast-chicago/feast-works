@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { Address, Business } from "@/types/feast";
+import { Address, Business } from "@/schema";
 import { Pencil, Save, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

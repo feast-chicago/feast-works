@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
-import { Business, Settings } from "@/types/feast";
+import { Business, Settings } from "@/schema";
 import { Pencil, Save, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

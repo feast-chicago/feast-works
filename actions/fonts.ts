@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleFont } from "@/types/feast";
+import { GoogleFont } from "@/schema";
 
 interface GoogleFontsResponse {
   items: GoogleFont[];

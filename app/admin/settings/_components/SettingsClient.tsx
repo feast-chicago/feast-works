@@ -3,7 +3,7 @@
 import ErrorIcon from "@/components/ErrorIcon";
 import LoadingIcon from "@/components/LoadingIcon";
 import { useBusiness } from "@/hooks/use-business";
-import { GoogleFont } from "@/types/feast";
+import { GoogleFont } from "@/schema";
 import BrandSettings from "./BrandSettings";
 import FeatureSettings from "./FeatureSettings";
 import GeneralSettings from "./GeneralSettings";

@@ -1,6 +1,6 @@
 "use client";
 
-import { PageComponent } from "@/types/feast";
+import { PageComponent } from "@/schema";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Eye, EyeOff, GripVertical, Settings2, Trash2 } from "lucide-react";

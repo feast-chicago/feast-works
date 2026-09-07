@@ -48,7 +48,7 @@ import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { formatBytes } from "@/lib/utils";
-import { Business, GoogleFont, Theme, ThemeSchema } from "@/types/feast";
+import { Business, GoogleFont, Theme, ThemeSchema } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { FileImage, Pencil, Save, X } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";

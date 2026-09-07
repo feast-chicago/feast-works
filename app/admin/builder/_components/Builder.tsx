@@ -10,7 +10,7 @@ import {
   PageComponent,
   PageKey,
   SiteLayout,
-} from "@/types/feast";
+} from "@/schema";
 import {
   closestCenter,
   DndContext,

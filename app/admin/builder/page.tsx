@@ -1,5 +1,5 @@
 import { getBusiness } from "@/actions/business";
-import { SiteLayout, SiteLayoutSchema } from "@/types/feast";
+import { SiteLayout, SiteLayoutSchema } from "@/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import Builder from "./_components/Builder";
 

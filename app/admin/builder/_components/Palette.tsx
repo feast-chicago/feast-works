@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PageComponent } from "@/types/feast";
+import { PageComponent } from "@/schema";
 import { useDraggable } from "@dnd-kit/core";
 import {
   Clock,

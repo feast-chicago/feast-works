@@ -1,7 +1,7 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
-import { Business, StorageItem } from "@/types/feast";
+import { Business, StorageItem } from "@/schema";
 import { unstable_cache } from "next/cache";
 
 async function fetchFromSupabase(id: string): Promise<Business> {

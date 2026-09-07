@@ -1,6 +1,6 @@
 "use server";
 
-import { Address } from "@/types/feast";
+import { Address } from "@/schema";
 import { AddressType, Client } from "@googlemaps/google-maps-services-js";
 
 const client = new Client();
