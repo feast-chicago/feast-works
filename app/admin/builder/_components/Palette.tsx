@@ -40,13 +40,13 @@ const AVAILABLE_COMPONENTS: {
   {
     type: "image",
     label: "Image",
-    description: "",
+    description: "Add an image",
     icon: <Image className="size-7" />,
   },
   {
     type: "button",
     label: "Button",
-    description: "",
+    description: "Interactive button",
     icon: <SquareDashedMousePointer className="size-7" />,
   },
   {
@@ -64,7 +64,7 @@ const AVAILABLE_COMPONENTS: {
   {
     type: "social",
     label: "Social",
-    description: "",
+    description: "Social media links",
     icon: <HeartPlus className="size-7" />,
   },
   {

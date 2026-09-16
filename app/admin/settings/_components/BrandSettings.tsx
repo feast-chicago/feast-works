@@ -1,6 +1,7 @@
 "use client";
 
 import { uploadLogo } from "@/actions/business";
+import ColorPickerPopover from "@/components/ColorPickerPopover";
 import {
   Attachment,
   AttachmentAction,
@@ -29,14 +30,8 @@ import {
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -47,12 +42,11 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
-import { formatBytes } from "@/lib/utils";
+import { formatBytes, getForeground } from "@/lib/utils";
 import { Business, GoogleFont, Theme, ThemeSchema } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { FileImage, Pencil, Save, X } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { ChromePicker } from "react-color";
+import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -72,8 +66,8 @@ export default function BrandSettings({
   const {
     primary_logo_url,
     letter_spacing,
-    primary_brand_color,
-    secondary_brand_color,
+    primary_color,
+    secondary_color,
     primary_font,
     secondary_font,
     is_dark_mode_enabled,
@@ -83,10 +77,9 @@ export default function BrandSettings({
   const [logo, setLogo] = useState<File | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(primary_logo_url);
 
-  const [primaryBrandColor, setPrimaryBrandColor] =
-    useState(primary_brand_color);
+  const [primaryBrandColor, setPrimaryBrandColor] = useState(primary_color);
   const [secondaryBrandColor, setSecondaryBrandColor] = useState(
-    secondary_brand_color ?? "",
+    secondary_color ?? "",
   );
   const [primaryFont, setPrimaryFont] = useState<GoogleFont | null>(
     primary_font ?? null,
@@ -142,8 +135,10 @@ export default function BrandSettings({
             platform_theme: business.theme.platform_theme,
             primary_logo_url,
             secondary_logo_url: null,
-            primary_brand_color: primaryBrandColor,
-            secondary_brand_color: secondaryBrandColor,
+            primary_color: primaryBrandColor,
+            primary_color_foreground: getForeground(primaryBrandColor),
+            secondary_color: secondaryBrandColor,
+            secondary_color_foreground: getForeground(secondaryBrandColor),
             primary_font: primaryFont,
             secondary_font: secondaryFont,
             letter_spacing: letterSpacing[0],
@@ -480,36 +475,5 @@ export default function BrandSettings({
         </FieldSet>
       </CardContent>
     </Card>
-  );
-}
-
-function ColorPickerPopover({
-  color,
-  setColor,
-  disabled,
-}: {
-  color: string;
-  setColor: Dispatch<SetStateAction<string>>;
-  disabled: boolean;
-}) {
-  // const [open, setOpen] = useState(false);
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <InputGroupButton
-          className={`size-5 p-0 ml-1.5 hover:scale-105 rounded-md`}
-          style={{ backgroundColor: color }}
-          disabled={disabled}
-        />
-      </PopoverTrigger>
-      <PopoverContent className="w-fit p-0 overflow-hidden">
-        <ChromePicker
-          color={color}
-          onChange={(color) => setColor(color.hex)}
-          disableAlpha
-          className="shadow-none! font-primary!"
-        />
-      </PopoverContent>
-    </Popover>
   );
 }

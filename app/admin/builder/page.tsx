@@ -13,7 +13,7 @@ export default async function BuilderPage() {
   return (
     <div className="flex flex-col gap-10">
       <h1 className="font-secondary text-4xl">Builder</h1>
-      <Builder initialLayout={layout} businessId={business.id} />
+      <Builder initialLayout={layout} business={business} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Business,
   DEFAULT_PROPS,
   PAGE_KEYS,
   PageComponent,
@@ -32,10 +33,10 @@ import PropsPanel from "./PropsPanel";
 
 export default function Builder({
   initialLayout,
-  businessId,
+  business,
 }: {
   initialLayout: SiteLayout;
-  businessId: string;
+  business: Business;
 }) {
   const [layout, setLayout] = useState<SiteLayout>(initialLayout);
   const [activePage, setActivePage] = useState<PageKey>("home");
@@ -150,7 +151,7 @@ export default function Builder({
 
   function handleSave() {
     startTransition(async () => {
-      const error = await updateLayout(businessId, layout);
+      const error = await updateLayout(business, layout);
       if (error) toast.error("Failed to save layout.");
       else toast.success("Layout saved.");
     });
@@ -190,6 +191,7 @@ export default function Builder({
         <aside className="w-64 shrink-0 flex flex-col gap-4">
           {selected ? (
             <PropsPanel
+              business={business}
               component={selected}
               onChange={(newProps) => handlePropsChange(selected.id, newProps)}
               onClose={() => setSelectedId(null)}

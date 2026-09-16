@@ -34,7 +34,7 @@ export default function Canvas({
     <div
       ref={setNodeRef}
       className={`
-        flex flex-col gap-3 p-6 min-h-96 rounded-xl border border-dashed
+        flex flex-col p-6 min-h-96 rounded-xl border border-dashed
         transition-colors duration-150
         ${
           isOver

@@ -94,7 +94,6 @@ type BlockProps<T> = {
 // ── Text block ──────────────────────────────────────────────────
 
 export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
-  const HeadingTag = props.headingSize ?? "h2";
   const alignClass =
     props.alignment === "center"
       ? "text-center items-center"
@@ -103,16 +102,7 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
         : "text-left items-start";
 
   return (
-    <section className={`p-1 flex flex-col gap-4 ${alignClass}`}>
-      {props.heading !== null && (
-        <InlineEdit
-          as={HeadingTag}
-          value={props.heading}
-          onChange={(v) => onChange({ ...props, heading: v })}
-          placeholder="Add a heading..."
-          className="text-2xl font-secondary font-medium text-foreground"
-        />
-      )}
+    <section className={`flex flex-col gap-4 ${alignClass}`}>
       {props.body !== null && (
         <InlineEdit
           as="p"
@@ -121,19 +111,6 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
           placeholder="Add body text..."
           className="text-base text-muted-foreground leading-relaxed max-w-2xl"
         />
-      )}
-      {props.button && (
-        <div className="mt-2">
-          <InlineEdit
-            as="span"
-            value={props.button.label}
-            onChange={(v) =>
-              onChange({ ...props, button: { ...props.button!, label: v } })
-            }
-            placeholder="Button label"
-            className="inline-block bg-primary text-primary-foreground text-sm font-medium px-5 py-2.5 rounded-lg"
-          />
-        </div>
       )}
     </section>
   );

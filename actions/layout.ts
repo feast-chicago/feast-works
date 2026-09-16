@@ -1,10 +1,10 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
-import { SiteLayout, SiteLayoutSchema } from "@/schema";
+import { Business, SiteLayout, SiteLayoutSchema } from "@/schema";
 
 export async function updateLayout(
-  businessId: string,
+  business: Business,
   layout: SiteLayout,
 ): Promise<string | null> {
   const parsed = SiteLayoutSchema.safeParse(layout);
@@ -13,7 +13,7 @@ export async function updateLayout(
   const { error } = await supabase()
     .from("businesses")
     .update({ layout: parsed.data })
-    .eq("id", businessId);
+    .eq("id", business.id);
 
   return error ? error.message : null;
 }

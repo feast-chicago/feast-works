@@ -1,20 +1,22 @@
-import { PageComponent } from "@/schema";
+import { Business, PageComponent } from "@/schema";
 import { X } from "lucide-react";
-import RichTextEditor from "./RichTextEditor";
+import BlockEditor from "./BlockEditor";
 
 const editors: Partial<
   Record<PageComponent["type"], React.ComponentType<any>>
 > = {
-  text: RichTextEditor,
+  text: BlockEditor,
 };
 
 interface PropsPanelProps {
+  business: Business;
   component: PageComponent;
   onChange: (newProps: Record<string, unknown>) => void;
   onClose: () => void;
 }
 
 export default function PropsPanel({
+  business,
   component,
   onChange,
   onClose,
@@ -25,7 +27,7 @@ export default function PropsPanel({
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium capitalize">
-          {component.type.replace(/_/g, " ")}
+          {component.type.replace(/_/g, " ")} Block Settings
         </p>
         <button
           onClick={onClose}
@@ -35,7 +37,11 @@ export default function PropsPanel({
         </button>
       </div>
       {Editor ? (
-        <Editor props={component.props} onChange={onChange} />
+        <Editor
+          business={business}
+          props={component.props}
+          onChange={onChange}
+        />
       ) : (
         <p className="text-sm text-muted-foreground">
           No settings for this section yet.

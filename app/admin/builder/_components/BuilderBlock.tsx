@@ -3,7 +3,7 @@
 import { PageComponent } from "@/schema";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Eye, EyeOff, GripVertical, Settings2, Trash2 } from "lucide-react";
+import { Eye, EyeOff, GripVertical, Trash2 } from "lucide-react";
 import { useRef } from "react";
 
 export default function BuilderBlock({
@@ -50,23 +50,19 @@ export default function BuilderBlock({
       {/* selection / hover ring */}
       <div
         className={`
-          absolute inset-0 rounded-md pointer-events-none z-10 transition-all
+          absolute inset-0 rounded-none pointer-events-none z-10 transition-none
           ${
             isSelected
-              ? "ring-2 ring-primary ring-offset-2"
-              : "ring-1 ring-transparent group-hover:ring-border group-hover:ring-offset-1"
+              ? "ring-2 ring-primary ring-offset-0"
+              : "ring-1 ring-transparent group-hover:ring-border group-hover:ring-offset-0"
           }
         `}
       />
 
-      {/* toolbar — shown on hover or when selected */}
+      {/* Component Toolbar */}
       <div
         className={`
-          absolute -top-8 left-0 z-20 flex items-center gap-0.5
-          bg-background border border-border rounded-md shadow-sm px-1 py-0.5
-          transition-opacity duration-100
-          ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
-        `}
+          absolute -top-6 -left-6 z-20 flex flex-col items-center gap-0.5 border border-primary bg-primary rounded-none py-0.5 rounded-l-sm transition-opacity duration-100 ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
       >
         {/* drag handle */}
         <button
@@ -78,29 +74,7 @@ export default function BuilderBlock({
           <GripVertical className="size-3.5" />
         </button>
 
-        <div className="w-px h-4 bg-border mx-0.5" />
-
-        {/* component name */}
-        <span className="text-xs text-muted-foreground px-1 capitalize select-none">
-          {component.type.replace(/_/g, " ")}
-        </span>
-
-        <div className="w-px h-4 bg-border mx-0.5" />
-
-        {/* settings — opens left panel */}
-        <button
-          onClick={() => onSelect(component.id)}
-          className={`p-1 rounded transition-colors ${
-            isSelected
-              ? "text-primary"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-          aria-label="Edit settings"
-        >
-          <Settings2 className="size-3.5" />
-        </button>
-
-        {/* visibility */}
+        {/* Visibility */}
         <button
           onClick={() => onToggleVisible(component.id)}
           className="p-1 text-muted-foreground hover:text-foreground rounded"
@@ -123,7 +97,15 @@ export default function BuilderBlock({
         </button>
       </div>
 
-      {/* the actual rendered component */}
+      {/* Component Label */}
+      <div
+        className={`
+          absolute -top-6 h-6 z-20 flex flex-col justify-center items-center border border-primary bg-primary rounded-none pl-1.5 pr-3 rounded-tr-sm transition-opacity duration-100 ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"} text-xs text-primary-foreground font-bold capitalize select-none`}
+      >
+        {component.type.replace(/_/g, " ")} Block
+      </div>
+
+      {/* Rendered component */}
       <div
         ref={blockRef}
         onClick={() => onSelect(component.id)}
