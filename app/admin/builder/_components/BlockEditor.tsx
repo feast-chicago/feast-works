@@ -9,7 +9,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   InputGroup,
@@ -26,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { BorderSchema, Business, TextProps } from "@/schema";
 import { Dispatch, SetStateAction, useState } from "react";
 import z from "zod";
@@ -48,6 +55,19 @@ export default function BlockEditor({
   );
 
   const [borderColor, setBorderColor] = useState("");
+
+  const [isPaddingAllEnabled, setIsPaddingAllEnabled] = useState(false);
+  const [minPadding, maxPadding] = [0, 50];
+  const [paddingAll, setPaddingAll] = useState(minPadding);
+  const [, setInputPaddingAll] = useState(minPadding.toString());
+  const [paddingTop, setPaddingTop] = useState(minPadding);
+  const [, setInputPaddingTop] = useState(minPadding.toString());
+  const [paddingBottom, setPaddingBottom] = useState(minPadding);
+  const [, setInputPaddingBottom] = useState(minPadding.toString());
+  const [paddingLeft, setPaddingLeft] = useState(minPadding);
+  const [, setInputPaddingLeft] = useState(minPadding.toString());
+  const [paddingRight, setPaddingRight] = useState(minPadding);
+  const [, setInputPaddingRight] = useState(minPadding.toString());
 
   const { theme } = business;
   const {
@@ -236,7 +256,7 @@ export default function BlockEditor({
                 />
               </span>
               <Slider
-                value={[borderWidth]} // Shadcn Slider requires an array for single or multi-range handles
+                value={[borderWidth]}
                 onValueChange={([borderWidth]) =>
                   handleSliderChange(
                     [borderWidth],
@@ -270,8 +290,8 @@ export default function BlockEditor({
                   />
                   <InputGroupAddon align="inline-start">
                     <ColorPickerPopover
-                      color={backgroundColor}
-                      setColor={setBackgroundColor}
+                      color={borderColor}
+                      setColor={setBorderColor}
                       onClick={() =>
                         update({
                           border: { ...props.border, color: borderColor },
@@ -383,10 +403,235 @@ export default function BlockEditor({
       <Accordion type="single" collapsible className="rounded-lg border">
         <AccordionItem value="padding" className="px-4">
           <AccordionTrigger>Padding</AccordionTrigger>
-          <AccordionContent>
-            <p>Add space between the inside of the border and your text.</p>
-            <p>Apply to all sides</p>
-            <p>Top, Bottom, Left, Right</p>
+          <AccordionContent className="h-fit flex flex-col gap-5">
+            <p className="text-xs text-muted-foreground">
+              Add space between the <span className="italic">inside</span> of
+              the border and your text.
+            </p>
+
+            <Field orientation="horizontal" className="max-w-sm">
+              <FieldContent>
+                <FieldLabel htmlFor="padding-all-sides">
+                  Apply to all sides
+                </FieldLabel>
+                <FieldDescription className="text-xs">
+                  Add the same amount of padding to all sides at once.
+                </FieldDescription>
+              </FieldContent>
+              <Switch
+                id="padding-all-sides"
+                checked={isPaddingAllEnabled}
+                onCheckedChange={setIsPaddingAllEnabled}
+              />
+            </Field>
+            {/* Padding */}
+            {isPaddingAllEnabled ? (
+              <Field>
+                <span className="flex flex-row justify-between">
+                  <FieldLabel htmlFor="padding-all">Padding</FieldLabel>
+                  <Input
+                    id="padding-all"
+                    placeholder="0"
+                    value={paddingAll}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      const numValue = parseInt(value);
+
+                      handleInputChange(
+                        value,
+                        setPaddingAll,
+                        setInputPaddingAll,
+                        maxPadding,
+                      );
+                      update({
+                        padding: {
+                          top: numValue,
+                          bottom: numValue,
+                          left: numValue,
+                          right: numValue,
+                        },
+                      });
+                    }}
+                    className="w-10! text-center"
+                  />
+                </span>
+                <Slider
+                  value={[paddingAll]}
+                  onValueChange={([paddingAll]) =>
+                    handleSliderChange(
+                      [paddingAll],
+                      setPaddingAll,
+                      setInputPaddingAll,
+                    )
+                  }
+                  min={minPadding}
+                  max={maxPadding}
+                  step={1}
+                />
+              </Field>
+            ) : (
+              <>
+                {/* Top */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="padding-top">Top</FieldLabel>
+                    <Input
+                      id="padding-top"
+                      placeholder="0"
+                      value={paddingTop}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(
+                          value,
+                          setPaddingTop,
+                          setInputPaddingTop,
+                          maxPadding,
+                        );
+                        update({
+                          padding: { ...props.padding, top: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[paddingTop]}
+                    onValueChange={([paddingTop]) =>
+                      handleSliderChange(
+                        [paddingTop],
+                        setPaddingTop,
+                        setInputPaddingTop,
+                      )
+                    }
+                    min={minPadding}
+                    max={maxPadding}
+                    step={1}
+                  />
+                </Field>
+
+                {/* Bottom */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="padding-bottom">Bottom</FieldLabel>
+                    <Input
+                      id="padding-bottom"
+                      placeholder="0"
+                      value={paddingBottom}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(
+                          value,
+                          setPaddingBottom,
+                          setInputPaddingBottom,
+                          maxPadding,
+                        );
+                        update({
+                          padding: { ...props.padding, bottom: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[paddingBottom]}
+                    onValueChange={([paddingBottom]) =>
+                      handleSliderChange(
+                        [paddingBottom],
+                        setPaddingBottom,
+                        setInputPaddingBottom,
+                      )
+                    }
+                    min={minPadding}
+                    max={maxPadding}
+                    step={1}
+                  />
+                </Field>
+
+                {/* Left */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="padding-left">Left</FieldLabel>
+                    <Input
+                      id="padding-left"
+                      placeholder="0"
+                      value={paddingLeft}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(
+                          value,
+                          setPaddingLeft,
+                          setInputPaddingLeft,
+                          maxPadding,
+                        );
+                        update({
+                          padding: { ...props.padding, left: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[paddingLeft]}
+                    onValueChange={([paddingLeft]) =>
+                      handleSliderChange(
+                        [paddingLeft],
+                        setPaddingLeft,
+                        setInputPaddingLeft,
+                      )
+                    }
+                    min={minPadding}
+                    max={maxPadding}
+                    step={1}
+                  />
+                </Field>
+
+                {/* Right */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="padding-right">Right</FieldLabel>
+                    <Input
+                      id="padding-right"
+                      placeholder="0"
+                      value={paddingRight}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(
+                          value,
+                          setPaddingRight,
+                          setInputPaddingRight,
+                          maxPadding,
+                        );
+                        update({
+                          padding: { ...props.padding, right: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[paddingRight]}
+                    onValueChange={([paddingRight]) =>
+                      handleSliderChange(
+                        [paddingRight],
+                        setPaddingRight,
+                        setInputPaddingRight,
+                      )
+                    }
+                    min={minPadding}
+                    max={maxPadding}
+                    step={1}
+                  />
+                </Field>
+              </>
+            )}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -404,53 +649,6 @@ export default function BlockEditor({
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      {/* <Field>
-        <FieldLabel>Heading</FieldLabel>
-        <Input
-          value={props.heading ?? ""}
-          onChange={(e) => update({ heading: e.target.value })}
-          placeholder="Your heading here"
-        />
-      </Field> */}
-
-      {/*  {props.button && (
-        <>
-          <Field>
-            <FieldLabel>Button link</FieldLabel>
-            <Input
-              value={props.button.href ?? ""}
-              onChange={(e) =>
-                update({
-                  button: { ...props.button!, href: e.target.value },
-                })
-              }
-              placeholder="https:// or /menu"
-            />
-          </Field>
-
-          <Field>
-            <FieldLabel>Button style</FieldLabel>
-            <Select
-              value={props.button.variant}
-              onValueChange={(v) =>
-                update({
-                  button: { ...props.button!, variant: v as any },
-                })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="primary">Primary</SelectItem>
-                <SelectItem value="secondary">Secondary</SelectItem>
-                <SelectItem value="ghost">Ghost</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-        </>
-      )} */}
     </FieldGroup>
   );
 }
