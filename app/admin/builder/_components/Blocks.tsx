@@ -94,21 +94,30 @@ type BlockProps<T> = {
 // ── Text block ──────────────────────────────────────────────────
 
 export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
+  const { alignment, backgroundColor, body, border, margin, padding } = props;
   const alignClass =
-    props.alignment === "center"
+    alignment === "center"
       ? "text-center items-center"
-      : props.alignment === "right"
+      : alignment === "right"
         ? "text-right items-end"
         : "text-left items-start";
 
   return (
-    <section className={`flex flex-col gap-4 ${alignClass}`}>
-      {props.body !== null && (
+    <section
+      className={`flex flex-col gap-4 ${alignClass}`}
+      style={{
+        backgroundColor,
+        border: `${border.width}px ${border.style.toLowerCase()} ${border.color}`,
+        margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+      }}
+    >
+      {body !== null && (
         <InlineEdit
           as="p"
-          value={props.body}
+          value={body}
           onChange={(v) => onChange({ ...props, body: v })}
-          placeholder="Add body text..."
+          placeholder="Add text here..."
           className="text-base text-muted-foreground leading-relaxed max-w-2xl"
         />
       )}

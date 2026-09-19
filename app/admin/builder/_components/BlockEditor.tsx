@@ -50,24 +50,23 @@ export default function BlockEditor({
 
   const [minBorderWidth, maxBorderWidth] = [0, 50];
   const [borderWidth, setBorderWidth] = useState(minBorderWidth);
-  const [inputBorderWidth, setInputBorderWidth] = useState(
-    minBorderWidth.toString(),
-  );
-
   const [borderColor, setBorderColor] = useState("");
 
   const [isPaddingAllEnabled, setIsPaddingAllEnabled] = useState(false);
   const [minPadding, maxPadding] = [0, 50];
   const [paddingAll, setPaddingAll] = useState(minPadding);
-  const [, setInputPaddingAll] = useState(minPadding.toString());
   const [paddingTop, setPaddingTop] = useState(minPadding);
-  const [, setInputPaddingTop] = useState(minPadding.toString());
   const [paddingBottom, setPaddingBottom] = useState(minPadding);
-  const [, setInputPaddingBottom] = useState(minPadding.toString());
   const [paddingLeft, setPaddingLeft] = useState(minPadding);
-  const [, setInputPaddingLeft] = useState(minPadding.toString());
   const [paddingRight, setPaddingRight] = useState(minPadding);
-  const [, setInputPaddingRight] = useState(minPadding.toString());
+
+  const [isMarginAllEnabled, setIsMarginAllEnabled] = useState(false);
+  const [minMargin, maxMargin] = [0, 50];
+  const [marginAll, setMarginAll] = useState(minMargin);
+  const [marginTop, setMarginTop] = useState(minMargin);
+  const [marginBottom, setMarginBottom] = useState(minMargin);
+  const [marginLeft, setMarginLeft] = useState(minMargin);
+  const [marginRight, setMarginRight] = useState(minMargin);
 
   const { theme } = business;
   const {
@@ -81,27 +80,15 @@ export default function BlockEditor({
     onChange({ ...props, ...patch });
   }
 
-  function handleSliderChange(
-    newValue: number[],
-    setValue: Dispatch<SetStateAction<number>>,
-    setInputValue: Dispatch<SetStateAction<string>>,
-  ) {
-    const val = newValue[0];
-    setValue(val);
-    setInputValue(val.toString());
-  }
-
   function handleInputChange(
     value: string,
     setValue: Dispatch<SetStateAction<number>>,
-    setInputValue: Dispatch<SetStateAction<string>>,
     maxValue: number,
   ) {
     const cleanValue = value.replace(/\D/g, "");
 
     if (cleanValue === "") {
       setValue(0);
-      setInputValue("0");
       return;
     }
 
@@ -109,26 +96,17 @@ export default function BlockEditor({
 
     if (numValue > maxValue) {
       setValue(maxValue);
-      setInputValue(maxValue.toString());
     } else {
       setValue(numValue);
-      setInputValue(cleanValue);
     }
   }
 
-  function handleBlur(
-    value: string,
-    setValue: Dispatch<SetStateAction<string>>,
-    minValue: number,
+  function handleSliderChange(
+    newValue: number[],
+    setValue: Dispatch<SetStateAction<number>>,
   ) {
-    if (value !== "") {
-      const numValue = parseInt(value, 10);
-      if (numValue < minValue) {
-        setValue(minValue.toString());
-      }
-    } else {
-      setValue(minValue.toString());
-    }
+    const val = newValue[0];
+    setValue(val);
   }
 
   type BorderStyle = z.infer<typeof BorderSchema>["style"];
@@ -237,33 +215,26 @@ export default function BlockEditor({
                   id="border-thickness"
                   placeholder="0"
                   value={borderWidth}
-                  onChange={(e) =>
-                    handleInputChange(
-                      e.target.value,
-                      setBorderWidth,
-                      setInputBorderWidth,
-                      maxBorderWidth,
-                    )
-                  }
-                  onBlur={() =>
-                    handleBlur(
-                      inputBorderWidth,
-                      setInputBorderWidth,
-                      minBorderWidth,
-                    )
-                  }
+                  onChange={(e) => {
+                    const { value } = e.target;
+                    const numValue = parseInt(value);
+
+                    handleInputChange(value, setBorderWidth, maxBorderWidth);
+                    update({
+                      border: { ...props.border, width: numValue },
+                    });
+                  }}
                   className="w-10! text-center"
                 />
               </span>
               <Slider
                 value={[borderWidth]}
-                onValueChange={([borderWidth]) =>
-                  handleSliderChange(
-                    [borderWidth],
-                    setBorderWidth,
-                    setInputBorderWidth,
-                  )
-                }
+                onValueChange={([borderWidth]) => {
+                  handleSliderChange([borderWidth], setBorderWidth);
+                  update({
+                    border: { ...props.border, width: borderWidth },
+                  });
+                }}
                 min={minBorderWidth}
                 max={maxBorderWidth}
                 step={1}
@@ -406,7 +377,7 @@ export default function BlockEditor({
           <AccordionContent className="h-fit flex flex-col gap-5">
             <p className="text-xs text-muted-foreground">
               Add space between the <span className="italic">inside</span> of
-              the border and your text.
+              the border and your block.
             </p>
 
             <Field orientation="horizontal" className="max-w-sm">
@@ -437,12 +408,7 @@ export default function BlockEditor({
                       const { value } = e.target;
                       const numValue = parseInt(value);
 
-                      handleInputChange(
-                        value,
-                        setPaddingAll,
-                        setInputPaddingAll,
-                        maxPadding,
-                      );
+                      handleInputChange(value, setPaddingAll, maxPadding);
                       update({
                         padding: {
                           top: numValue,
@@ -457,13 +423,17 @@ export default function BlockEditor({
                 </span>
                 <Slider
                   value={[paddingAll]}
-                  onValueChange={([paddingAll]) =>
-                    handleSliderChange(
-                      [paddingAll],
-                      setPaddingAll,
-                      setInputPaddingAll,
-                    )
-                  }
+                  onValueChange={([paddingAll]) => {
+                    handleSliderChange([paddingAll], setPaddingAll);
+                    update({
+                      padding: {
+                        top: paddingAll,
+                        bottom: paddingAll,
+                        left: paddingAll,
+                        right: paddingAll,
+                      },
+                    });
+                  }}
                   min={minPadding}
                   max={maxPadding}
                   step={1}
@@ -483,12 +453,7 @@ export default function BlockEditor({
                         const { value } = e.target;
                         const numValue = parseInt(value);
 
-                        handleInputChange(
-                          value,
-                          setPaddingTop,
-                          setInputPaddingTop,
-                          maxPadding,
-                        );
+                        handleInputChange(value, setPaddingTop, maxPadding);
                         update({
                           padding: { ...props.padding, top: numValue },
                         });
@@ -498,13 +463,12 @@ export default function BlockEditor({
                   </span>
                   <Slider
                     value={[paddingTop]}
-                    onValueChange={([paddingTop]) =>
-                      handleSliderChange(
-                        [paddingTop],
-                        setPaddingTop,
-                        setInputPaddingTop,
-                      )
-                    }
+                    onValueChange={([paddingTop]) => {
+                      handleSliderChange([paddingTop], setPaddingTop);
+                      update({
+                        padding: { ...props.padding, top: paddingTop },
+                      });
+                    }}
                     min={minPadding}
                     max={maxPadding}
                     step={1}
@@ -523,12 +487,7 @@ export default function BlockEditor({
                         const { value } = e.target;
                         const numValue = parseInt(value);
 
-                        handleInputChange(
-                          value,
-                          setPaddingBottom,
-                          setInputPaddingBottom,
-                          maxPadding,
-                        );
+                        handleInputChange(value, setPaddingBottom, maxPadding);
                         update({
                           padding: { ...props.padding, bottom: numValue },
                         });
@@ -538,13 +497,12 @@ export default function BlockEditor({
                   </span>
                   <Slider
                     value={[paddingBottom]}
-                    onValueChange={([paddingBottom]) =>
-                      handleSliderChange(
-                        [paddingBottom],
-                        setPaddingBottom,
-                        setInputPaddingBottom,
-                      )
-                    }
+                    onValueChange={([paddingBottom]) => {
+                      handleSliderChange([paddingBottom], setPaddingBottom);
+                      update({
+                        padding: { ...props.padding, top: paddingBottom },
+                      });
+                    }}
                     min={minPadding}
                     max={maxPadding}
                     step={1}
@@ -563,12 +521,7 @@ export default function BlockEditor({
                         const { value } = e.target;
                         const numValue = parseInt(value);
 
-                        handleInputChange(
-                          value,
-                          setPaddingLeft,
-                          setInputPaddingLeft,
-                          maxPadding,
-                        );
+                        handleInputChange(value, setPaddingLeft, maxPadding);
                         update({
                           padding: { ...props.padding, left: numValue },
                         });
@@ -578,13 +531,12 @@ export default function BlockEditor({
                   </span>
                   <Slider
                     value={[paddingLeft]}
-                    onValueChange={([paddingLeft]) =>
-                      handleSliderChange(
-                        [paddingLeft],
-                        setPaddingLeft,
-                        setInputPaddingLeft,
-                      )
-                    }
+                    onValueChange={([paddingLeft]) => {
+                      handleSliderChange([paddingLeft], setPaddingLeft);
+                      update({
+                        padding: { ...props.padding, top: paddingLeft },
+                      });
+                    }}
                     min={minPadding}
                     max={maxPadding}
                     step={1}
@@ -603,12 +555,7 @@ export default function BlockEditor({
                         const { value } = e.target;
                         const numValue = parseInt(value);
 
-                        handleInputChange(
-                          value,
-                          setPaddingRight,
-                          setInputPaddingRight,
-                          maxPadding,
-                        );
+                        handleInputChange(value, setPaddingRight, maxPadding);
                         update({
                           padding: { ...props.padding, right: numValue },
                         });
@@ -618,13 +565,12 @@ export default function BlockEditor({
                   </span>
                   <Slider
                     value={[paddingRight]}
-                    onValueChange={([paddingRight]) =>
-                      handleSliderChange(
-                        [paddingRight],
-                        setPaddingRight,
-                        setInputPaddingRight,
-                      )
-                    }
+                    onValueChange={([paddingRight]) => {
+                      handleSliderChange([paddingRight], setPaddingRight);
+                      update({
+                        padding: { ...props.padding, top: paddingRight },
+                      });
+                    }}
                     min={minPadding}
                     max={maxPadding}
                     step={1}
@@ -640,12 +586,210 @@ export default function BlockEditor({
       <Accordion type="single" collapsible className="rounded-lg border">
         <AccordionItem value="margin" className="px-4">
           <AccordionTrigger>Margin</AccordionTrigger>
-          <AccordionContent>
-            <p>
-              Add space between the outside of the border and your text block.
+          <AccordionContent className="h-fit flex flex-col gap-5">
+            <p className="text-xs text-muted-foreground">
+              Add space between the <span className="italic">outside</span> of
+              the border and your block.
             </p>
-            <p>Apply to all sides</p>
-            <p>Top, Bottom, Left, Right</p>
+
+            <Field orientation="horizontal" className="max-w-sm">
+              <FieldContent>
+                <FieldLabel htmlFor="margin-all-sides">
+                  Apply to all sides
+                </FieldLabel>
+                <FieldDescription className="text-xs">
+                  Add the same amount of margin to all sides at once.
+                </FieldDescription>
+              </FieldContent>
+              <Switch
+                id="margin-all-sides"
+                checked={isMarginAllEnabled}
+                onCheckedChange={setIsMarginAllEnabled}
+              />
+            </Field>
+            {/* Margin */}
+            {isMarginAllEnabled ? (
+              <Field>
+                <span className="flex flex-row justify-between">
+                  <FieldLabel htmlFor="margin-all">Margin</FieldLabel>
+                  <Input
+                    id="margin-all"
+                    placeholder="0"
+                    value={marginAll}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      const numValue = parseInt(value);
+
+                      handleInputChange(value, setMarginAll, maxMargin);
+                      update({
+                        margin: {
+                          top: numValue,
+                          bottom: numValue,
+                          left: numValue,
+                          right: numValue,
+                        },
+                      });
+                    }}
+                    className="w-10! text-center"
+                  />
+                </span>
+                <Slider
+                  value={[marginAll]}
+                  onValueChange={([marginAll]) => {
+                    handleSliderChange([marginAll], setMarginAll);
+                    update({
+                      margin: {
+                        top: marginAll,
+                        bottom: marginAll,
+                        left: marginAll,
+                        right: marginAll,
+                      },
+                    });
+                  }}
+                  min={minMargin}
+                  max={maxMargin}
+                  step={1}
+                />
+              </Field>
+            ) : (
+              <>
+                {/* Top */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="margin-top">Top</FieldLabel>
+                    <Input
+                      id="margin-top"
+                      placeholder="0"
+                      value={marginTop}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(value, setMarginTop, maxMargin);
+                        update({
+                          margin: { ...props.margin, top: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[marginTop]}
+                    onValueChange={([marginTop]) => {
+                      handleSliderChange([marginTop], setMarginTop);
+                      update({
+                        margin: { ...props.margin, top: marginTop },
+                      });
+                    }}
+                    min={minMargin}
+                    max={maxMargin}
+                    step={1}
+                  />
+                </Field>
+
+                {/* Bottom */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="margin-bottom">Bottom</FieldLabel>
+                    <Input
+                      id="margin-bottom"
+                      placeholder="0"
+                      value={marginBottom}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(value, setMarginBottom, maxMargin);
+                        update({
+                          margin: { ...props.margin, bottom: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[marginBottom]}
+                    onValueChange={([marginBottom]) => {
+                      handleSliderChange([marginBottom], setMarginBottom);
+                      update({
+                        margin: { ...props.margin, top: marginBottom },
+                      });
+                    }}
+                    min={minMargin}
+                    max={maxMargin}
+                    step={1}
+                  />
+                </Field>
+
+                {/* Left */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="margin-left">Left</FieldLabel>
+                    <Input
+                      id="margin-left"
+                      placeholder="0"
+                      value={marginLeft}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(value, setMarginLeft, maxMargin);
+                        update({
+                          margin: { ...props.margin, left: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[marginLeft]}
+                    onValueChange={([marginLeft]) => {
+                      handleSliderChange([marginLeft], setMarginLeft);
+                      update({
+                        margin: { ...props.margin, top: marginLeft },
+                      });
+                    }}
+                    min={minMargin}
+                    max={maxMargin}
+                    step={1}
+                  />
+                </Field>
+
+                {/* Right */}
+                <Field>
+                  <span className="flex flex-row justify-between">
+                    <FieldLabel htmlFor="margin-right">Right</FieldLabel>
+                    <Input
+                      id="margin-right"
+                      placeholder="0"
+                      value={marginRight}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const numValue = parseInt(value);
+
+                        handleInputChange(value, setMarginRight, maxMargin);
+                        update({
+                          margin: { ...props.margin, right: numValue },
+                        });
+                      }}
+                      className="w-10! text-center"
+                    />
+                  </span>
+                  <Slider
+                    value={[marginRight]}
+                    onValueChange={([marginRight]) => {
+                      handleSliderChange([marginRight], setMarginRight);
+                      update({
+                        margin: { ...props.margin, top: marginRight },
+                      });
+                    }}
+                    min={minMargin}
+                    max={maxMargin}
+                    step={1}
+                  />
+                </Field>
+              </>
+            )}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
