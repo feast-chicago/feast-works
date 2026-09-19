@@ -6,6 +6,9 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const IS_INLINE_EDITING_ALLOWED = true;
+
 export function formatNumber(number: Number): string {
   return number.toFixed(3).replace(/\.?0+$/, "");
 }

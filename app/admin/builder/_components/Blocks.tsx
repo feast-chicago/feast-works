@@ -1,5 +1,6 @@
 "use client";
 
+import { IS_INLINE_EDITING_ALLOWED } from "@/lib/utils";
 import {
   DividerProps,
   HoursProps,
@@ -69,7 +70,7 @@ export function InlineEdit({
       suppressContentEditableWarning
       onDoubleClick={(e) => {
         if (isEditingAllowed) {
-          e.stopPropagation(); // don't bubble to block's onClick (settings)
+          e.stopPropagation();
           setEditing(true);
         }
       }}
@@ -117,7 +118,7 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
           value={body}
           onChange={(v) => onChange({ ...props, body: v })}
           placeholder="Add text here..."
-          isEditingAllowed
+          isEditingAllowed={IS_INLINE_EDITING_ALLOWED}
           className="text-base"
         />
       )}
