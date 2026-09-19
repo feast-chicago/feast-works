@@ -76,7 +76,7 @@ export function InlineEdit({
       }}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
-      className={`w-full px-1 outline-none ring-1 ${editing ? "ring-primary cursor-text" : "ring-transparent cursor-pointer"} ${!value ? "text-muted-foreground/50 italic" : ""} ${className}`}
+      className={`w-full px-1 outline-none ring-1 ${!isEditingAllowed ? "ring-transparent cursor-default" : editing ? "ring-primary cursor-text" : "ring-transparent cursor-pointer"} ${!value ? "text-muted-foreground/50 italic" : ""} ${className}`}
       data-placeholder={!value && !editing ? placeholder : undefined}
     >
       {value || (editing ? "" : placeholder)}
