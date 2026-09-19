@@ -19,12 +19,14 @@ export function InlineEdit({
   onChange,
   placeholder = "Click to edit...",
   as: Tag = "p",
+  isEditingAllowed = false,
   className = "",
 }: {
   value: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
   as?: "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span";
+  isEditingAllowed?: boolean;
   className?: string;
 }) {
   const [editing, setEditing] = useState(false);
@@ -66,17 +68,14 @@ export function InlineEdit({
       contentEditable={editing}
       suppressContentEditableWarning
       onDoubleClick={(e) => {
-        e.stopPropagation(); // don't bubble to block's onClick (settings)
-        setEditing(true);
+        if (isEditingAllowed) {
+          e.stopPropagation(); // don't bubble to block's onClick (settings)
+          setEditing(true);
+        }
       }}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
-      className={`
-        outline-none
-        ${editing ? "ring-1 ring-primary rounded px-1 -mx-1 cursor-text" : "cursor-pointer"}
-        ${!value ? "text-muted-foreground/50 italic" : ""}
-        ${className}
-      `}
+      className={`w-full px-1 outline-none ring-1 ${editing ? "ring-primary cursor-text" : "ring-transparent cursor-pointer"} ${!value ? "text-muted-foreground/50 italic" : ""} ${className}`}
       data-placeholder={!value && !editing ? placeholder : undefined}
     >
       {value || (editing ? "" : placeholder)}
@@ -118,7 +117,8 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
           value={body}
           onChange={(v) => onChange({ ...props, body: v })}
           placeholder="Add text here..."
-          className="text-base text-muted-foreground leading-relaxed max-w-2xl"
+          isEditingAllowed
+          className="text-base"
         />
       )}
     </section>
