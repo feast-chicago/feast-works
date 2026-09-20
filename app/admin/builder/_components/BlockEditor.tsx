@@ -147,88 +147,90 @@ export default function BlockEditor({
               <FieldLabel>Alignment</FieldLabel>
               <ButtonGroup>
                 {/* Left */}
-                <Button
-                  size="icon-sm"
-                  variant={alignment === "left" ? "secondary" : "outline"}
-                  value={alignment}
-                  onClick={() => {
-                    const value = "left";
-                    setAlignment(value);
-                    update({ alignment: value });
-                  }}
-                >
-                  <Tooltip>
-                    <TooltipTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={alignment === "left" ? "secondary" : "outline"}
+                      value={alignment}
+                      onClick={() => {
+                        const value = "left";
+                        setAlignment(value);
+                        update({ alignment: value });
+                      }}
+                    >
                       <TextAlignStart />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Left align</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </Button>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Left align</p>
+                  </TooltipContent>
+                </Tooltip>
 
                 {/* Center */}
-                <Button
-                  size="icon-sm"
-                  variant={alignment === "center" ? "secondary" : "outline"}
-                  value={alignment}
-                  onClick={() => {
-                    const value = "center";
-                    setAlignment(value);
-                    update({ alignment: value });
-                  }}
-                >
-                  <Tooltip>
-                    <TooltipTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={alignment === "center" ? "secondary" : "outline"}
+                      value={alignment}
+                      onClick={() => {
+                        const value = "center";
+                        setAlignment(value);
+                        update({ alignment: value });
+                      }}
+                    >
                       <TextAlignCenter />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Center align</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </Button>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Center align</p>
+                  </TooltipContent>
+                </Tooltip>
 
                 {/* Right */}
-                <Button
-                  size="icon-sm"
-                  variant={alignment === "right" ? "secondary" : "outline"}
-                  value={alignment}
-                  onClick={() => {
-                    const value = "right";
-                    setAlignment(value);
-                    update({ alignment: value });
-                  }}
-                >
-                  <Tooltip>
-                    <TooltipTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={alignment === "right" ? "secondary" : "outline"}
+                      value={alignment}
+                      onClick={() => {
+                        const value = "right";
+                        setAlignment(value);
+                        update({ alignment: value });
+                      }}
+                    >
                       <TextAlignEnd />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Right align</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </Button>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Right align</p>
+                  </TooltipContent>
+                </Tooltip>
 
                 {/* Justify */}
-                <Button
-                  size="icon-sm"
-                  variant={alignment === "justify" ? "secondary" : "outline"}
-                  value={alignment}
-                  onClick={() => {
-                    const value = "justify";
-                    setAlignment(value);
-                    update({ alignment: value });
-                  }}
-                >
-                  <Tooltip>
-                    <TooltipTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={
+                        alignment === "justify" ? "secondary" : "outline"
+                      }
+                      value={alignment}
+                      onClick={() => {
+                        const value = "justify";
+                        setAlignment(value);
+                        update({ alignment: value });
+                      }}
+                    >
                       <TextAlignJustify />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Justify align</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </Button>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Justify</p>
+                  </TooltipContent>
+                </Tooltip>
               </ButtonGroup>
             </Field>
 
