@@ -94,7 +94,16 @@ type BlockProps<T> = {
 // ── Text block ──────────────────────────────────────────────────
 
 export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
-  const { alignment, backgroundColor, body, border, margin, padding } = props;
+  const {
+    alignment,
+    backgroundColor,
+    body,
+    border,
+    color,
+    format,
+    margin,
+    padding,
+  } = props;
   const alignClass =
     alignment === "center"
       ? "text-center items-center"
@@ -104,14 +113,22 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
           ? "text-justify"
           : "text-left items-start";
 
+  const formatClass = format
+    ? `${format.includes("bold") ? "!font-bold" : ""} ${format.includes("italic") ? "!italic" : ""}`
+    : "font-normal";
+
   return (
     <section
-      className={`flex flex-col gap-4 ${alignClass}`}
+      className={`flex flex-col gap-4 ${[alignClass, formatClass].filter((c) => c !== "").join(" ")}`}
       style={{
         backgroundColor,
         border: `${border.width}px ${border.style.toLowerCase()} ${border.color}`,
+        color,
         margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
         padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        textDecoration: format
+          ? `${format.includes("underline") ? "underline" : ""} ${format.includes("strikethrough") ? "line-through" : ""}`
+          : "none",
       }}
     >
       {body !== null && (

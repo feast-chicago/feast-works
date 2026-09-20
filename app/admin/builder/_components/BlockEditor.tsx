@@ -41,10 +41,14 @@ import {
 } from "@/components/ui/tooltip";
 import { BorderSchema, Business, TextProps } from "@/schema";
 import {
+  Bold,
+  Italic,
+  Strikethrough,
   TextAlignCenter,
   TextAlignEnd,
   TextAlignJustify,
   TextAlignStart,
+  Underline,
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import z from "zod";
@@ -61,6 +65,10 @@ export default function BlockEditor({
   const [alignment, setAlignment] = useState<
     "left" | "center" | "right" | "justify"
   >("left");
+  const [format, setFormat] = useState<
+    ("bold" | "italic" | "underline" | "strikethrough")[]
+  >([]);
+  const [color, setColor] = useState("");
 
   const [backgroundColor, setBackgroundColor] = useState("");
 
@@ -129,101 +137,304 @@ export default function BlockEditor({
 
   return (
     <FieldGroup>
-      {/* Alignment */}
-      <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
-        <FieldLabel>Alignment</FieldLabel>
-        <ButtonGroup>
-          {/* Left */}
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                size="icon"
-                variant="outline"
-                value={alignment}
-                onClick={() => {
-                  const value = "left";
-                  setAlignment(value);
-                  update({ alignment: value });
-                }}
-              >
-                <TextAlignStart />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Left align</p>
-            </TooltipContent>
-          </Tooltip>
+      {/* Text */}
+      <Accordion type="single" collapsible className="rounded-lg border">
+        <AccordionItem value="text" className="px-4">
+          <AccordionTrigger>Text</AccordionTrigger>
+          <AccordionContent className="h-fit flex flex-col gap-5">
+            {/* Alignment */}
+            <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
+              <FieldLabel>Alignment</FieldLabel>
+              <ButtonGroup>
+                {/* Left */}
+                <Button
+                  size="icon-sm"
+                  variant={alignment === "left" ? "secondary" : "outline"}
+                  value={alignment}
+                  onClick={() => {
+                    const value = "left";
+                    setAlignment(value);
+                    update({ alignment: value });
+                  }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <TextAlignStart />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Left align</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </Button>
 
-          {/* Center */}
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                size="icon"
-                variant="outline"
-                value={alignment}
-                onClick={() => {
-                  const value = "center";
-                  setAlignment(value);
-                  update({ alignment: value });
-                }}
-              >
-                <TextAlignCenter />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Center align</p>
-            </TooltipContent>
-          </Tooltip>
+                {/* Center */}
+                <Button
+                  size="icon-sm"
+                  variant={alignment === "center" ? "secondary" : "outline"}
+                  value={alignment}
+                  onClick={() => {
+                    const value = "center";
+                    setAlignment(value);
+                    update({ alignment: value });
+                  }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <TextAlignCenter />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Center align</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </Button>
 
-          {/* Right */}
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                size="icon"
-                variant="outline"
-                value={alignment}
-                onClick={() => {
-                  const value = "right";
-                  setAlignment(value);
-                  update({ alignment: value });
-                }}
-              >
-                <TextAlignEnd />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Right align</p>
-            </TooltipContent>
-          </Tooltip>
+                {/* Right */}
+                <Button
+                  size="icon-sm"
+                  variant={alignment === "right" ? "secondary" : "outline"}
+                  value={alignment}
+                  onClick={() => {
+                    const value = "right";
+                    setAlignment(value);
+                    update({ alignment: value });
+                  }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <TextAlignEnd />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Right align</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </Button>
 
-          {/* Justify */}
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                size="icon"
-                variant="outline"
-                value={alignment}
-                onClick={() => {
-                  const value = "justify";
-                  setAlignment(value);
-                  update({ alignment: value });
-                }}
-              >
-                <TextAlignJustify />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Justify align</p>
-            </TooltipContent>
-          </Tooltip>
-        </ButtonGroup>
-      </Field>
+                {/* Justify */}
+                <Button
+                  size="icon-sm"
+                  variant={alignment === "justify" ? "secondary" : "outline"}
+                  value={alignment}
+                  onClick={() => {
+                    const value = "justify";
+                    setAlignment(value);
+                    update({ alignment: value });
+                  }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <TextAlignJustify />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Justify align</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </Button>
+              </ButtonGroup>
+            </Field>
+
+            {/* Format */}
+            <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
+              <FieldLabel>Format</FieldLabel>
+              <ButtonGroup>
+                {/* Bold */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={
+                        format.includes("bold") ? "secondary" : "outline"
+                      }
+                      value={format}
+                      onClick={() => {
+                        const value = "bold";
+                        const newFormat: (
+                          | "bold"
+                          | "italic"
+                          | "underline"
+                          | "strikethrough"
+                        )[] = format.includes(value)
+                          ? format.filter((el) => el !== value)
+                          : [...format, value];
+
+                        setFormat(newFormat);
+                        update({ format: newFormat });
+                      }}
+                    >
+                      <Bold />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Bold</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                {/* Italic */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={
+                        format.includes("italic") ? "secondary" : "outline"
+                      }
+                      value={format}
+                      onClick={() => {
+                        const value = "italic";
+                        const newFormat: (
+                          | "bold"
+                          | "italic"
+                          | "underline"
+                          | "strikethrough"
+                        )[] = format.includes(value)
+                          ? format.filter((el) => el !== value)
+                          : [...format, value];
+
+                        setFormat(newFormat);
+                        update({ format: newFormat });
+                      }}
+                    >
+                      <Italic />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Italic</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                {/* Underline */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={
+                        format.includes("underline") ? "secondary" : "outline"
+                      }
+                      value={format}
+                      onClick={() => {
+                        const value = "underline";
+                        const newFormat: (
+                          | "bold"
+                          | "italic"
+                          | "underline"
+                          | "strikethrough"
+                        )[] = format.includes(value)
+                          ? format.filter((el) => el !== value)
+                          : [...format, value];
+
+                        setFormat(newFormat);
+                        update({ format: newFormat });
+                      }}
+                    >
+                      <Underline />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Underline</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                {/* Strikethrough */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant={
+                        format.includes("strikethrough")
+                          ? "secondary"
+                          : "outline"
+                      }
+                      value={format}
+                      onClick={() => {
+                        const value = "strikethrough";
+                        const newFormat: (
+                          | "bold"
+                          | "italic"
+                          | "underline"
+                          | "strikethrough"
+                        )[] = format.includes(value)
+                          ? format.filter((el) => el !== value)
+                          : [...format, value];
+
+                        setFormat(newFormat);
+                        update({ format: newFormat });
+                      }}
+                    >
+                      <Strikethrough />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Strikethrough</p>
+                  </TooltipContent>
+                </Tooltip>
+              </ButtonGroup>
+            </Field>
+
+            {/* Color */}
+            <Field>
+              <span className="flex flex-row justify-between gap-7">
+                <FieldLabel htmlFor="color">Color</FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    id="color"
+                    autoComplete="off"
+                    placeholder="Choose a color..."
+                    value={color}
+                    onChange={(e) => {
+                      setColor(e.target.value);
+                      update({ color: e.target.value });
+                    }}
+                  />
+                  <InputGroupAddon align="inline-start">
+                    <ColorPickerPopover
+                      color={color}
+                      setColor={setColor}
+                      onClick={() => update({ color })}
+                    />
+                  </InputGroupAddon>
+                </InputGroup>
+              </span>
+
+              <SeparatorWithText text="or" />
+
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  size="sm"
+                  style={{
+                    backgroundColor: primary_color,
+                    color: primary_color_foreground,
+                  }}
+                  onClick={() => {
+                    setColor(primary_color);
+                    update({ color: primary_color });
+                  }}
+                >
+                  Primary
+                </Button>
+                {secondary_color && secondary_color_foreground && (
+                  <Button
+                    size="sm"
+                    style={{
+                      backgroundColor: secondary_color,
+                      color: secondary_color_foreground,
+                    }}
+                    onClick={() => {
+                      setColor(secondary_color);
+                      update({ color: secondary_color });
+                    }}
+                  >
+                    Secondary
+                  </Button>
+                )}
+              </div>
+            </Field>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* Background Color */}
       <Accordion type="single" collapsible className="rounded-lg border">
         <AccordionItem value="border" className="px-4">
           <AccordionTrigger>Background Color</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="h-fit flex flex-col gap-5">
             <Field>
               <InputGroup>
                 <InputGroupInput
