@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Field,
   FieldContent,
@@ -33,7 +34,18 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { BorderSchema, Business, TextProps } from "@/schema";
+import {
+  TextAlignCenter,
+  TextAlignEnd,
+  TextAlignJustify,
+  TextAlignStart,
+} from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import z from "zod";
 
@@ -46,6 +58,10 @@ export default function BlockEditor({
   props: TextProps;
   onChange: (props: TextProps) => void;
 }) {
+  const [alignment, setAlignment] = useState<
+    "left" | "center" | "right" | "justify"
+  >("left");
+
   const [backgroundColor, setBackgroundColor] = useState("");
 
   const [minBorderWidth, maxBorderWidth] = [0, 50];
@@ -113,6 +129,96 @@ export default function BlockEditor({
 
   return (
     <FieldGroup>
+      {/* Alignment */}
+      <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
+        <FieldLabel>Alignment</FieldLabel>
+        <ButtonGroup>
+          {/* Left */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="outline"
+                value={alignment}
+                onClick={() => {
+                  const value = "left";
+                  setAlignment(value);
+                  update({ alignment: value });
+                }}
+              >
+                <TextAlignStart />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Left align</p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Center */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="outline"
+                value={alignment}
+                onClick={() => {
+                  const value = "center";
+                  setAlignment(value);
+                  update({ alignment: value });
+                }}
+              >
+                <TextAlignCenter />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Center align</p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Right */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="outline"
+                value={alignment}
+                onClick={() => {
+                  const value = "right";
+                  setAlignment(value);
+                  update({ alignment: value });
+                }}
+              >
+                <TextAlignEnd />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Right align</p>
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Justify */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="outline"
+                value={alignment}
+                onClick={() => {
+                  const value = "justify";
+                  setAlignment(value);
+                  update({ alignment: value });
+                }}
+              >
+                <TextAlignJustify />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Justify align</p>
+            </TooltipContent>
+          </Tooltip>
+        </ButtonGroup>
+      </Field>
+
       {/* Background Color */}
       <Accordion type="single" collapsible className="rounded-lg border">
         <AccordionItem value="border" className="px-4">

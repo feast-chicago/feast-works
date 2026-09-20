@@ -100,7 +100,9 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
       ? "text-center items-center"
       : alignment === "right"
         ? "text-right items-end"
-        : "text-left items-start";
+        : alignment === "justify"
+          ? "text-justify"
+          : "text-left items-start";
 
   return (
     <section
