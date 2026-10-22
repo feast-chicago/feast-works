@@ -92,7 +92,7 @@ export default function Palette({
         Add a section
       </p>
       {/* Fix issue 2 — 2-column grid */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {AVAILABLE_COMPONENTS.map(({ type, label, description, icon }) => (
           <PaletteItem
             key={type}
@@ -139,12 +139,12 @@ function PaletteItem({
           onClick={() => onAdd(type)}
           className={`
             flex flex-col items-center gap-2 p-3 rounded-lg border
-            border-border hover:border-primary hover:bg-primary/5
+            border-[#fea173] bg-[#ffe5d5] text-[#440806] hover:bg-[#fff4ed]
             transition-colors text-center touch-none
             ${isDragging ? "opacity-40" : ""}
           `}
         >
-          <span className="text-muted-foreground">{icon}</span>
+          <span className="text-primary">{icon}</span>
           <span className="text-xs font-medium leading-tight">{label}</span>
         </button>
       </TooltipTrigger>

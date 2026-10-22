@@ -1,11 +1,12 @@
 "use client";
 
 import { FieldGroup } from "@/components/ui/field";
-import { BaseProps, Business, TextProps } from "@/schema";
+import { BaseProps, Business, ImageProps, TextProps } from "@/schema";
 import BackgroundColorField from "./fields/BackgroundColorField";
 import BorderField from "./fields/BorderField";
 import SpacingField from "./fields/SpacingField";
 import TextField from "./fields/TextField";
+import ImageField from "./fields/ImageField";
 
 type BaseBlockEditorProps<T extends BaseProps> = {
   children: React.ReactNode;
@@ -25,7 +26,7 @@ export function BaseBlockEditor<T extends BaseProps>({
   }
 
   return (
-    <FieldGroup>
+    <FieldGroup className="h-full overflow-y-scroll">
       {children}
       <BackgroundColorField
         value={props.backgroundColor}
@@ -81,6 +82,26 @@ export function TextBlockEditor({
           update({ alignment: t.alignment, format: t.format, color: t.color })
         }
       />
+    </BaseBlockEditor>
+  );
+}
+
+export function ImageBlockEditor({
+  business,
+  props,
+  onChange,
+}: {
+  business: Business;
+  props: ImageProps;
+  onChange: (props: ImageProps) => void;
+}) {
+  function update(patch: Partial<ImageProps>) {
+    onChange({ ...props, ...patch });
+  }
+
+  return (
+    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+      <ImageField value={props} onChange={(i) => update(i)} />
     </BaseBlockEditor>
   );
 }

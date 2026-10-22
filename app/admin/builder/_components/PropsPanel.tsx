@@ -1,11 +1,12 @@
 import { Business, PageComponent } from "@/schema";
 import { X } from "lucide-react";
-import { TextBlockEditor } from "./BlockEditor";
+import { ImageBlockEditor, TextBlockEditor } from "./BlockEditor";
 
 const editors: Partial<
   Record<PageComponent["type"], React.ComponentType<any>>
 > = {
   text: TextBlockEditor,
+  image: ImageBlockEditor,
 };
 
 interface PropsPanelProps {
@@ -24,7 +25,7 @@ export default function PropsPanel({
   const Editor = editors[component.type];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="h-full flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
           {component.type.replace(/_/g, " ")} Settings

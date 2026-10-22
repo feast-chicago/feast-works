@@ -186,9 +186,12 @@ export default function Builder({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-6">
+      <div className="h-[calc(100vh-80px)] flex gap-6">
         {/* Left sidebar */}
-        <aside className="w-64 shrink-0 flex flex-col gap-4">
+        <aside
+          className={`${selected ? "w-64" : "w-44"} h-full transition-all duration-150 overflow-y-hidden shrink-0 flex flex-col gap-4`}
+        >
+          <h1 className="font-secondary text-4xl">Builder</h1>
           {selected ? (
             <PropsPanel
               business={business}
@@ -202,13 +205,14 @@ export default function Builder({
         </aside>
 
         {/* Canvas area */}
-        <div className="flex-1 flex flex-col gap-4 min-w-0">
+        <div className="h-full flex flex-col flex-1 min-w-0">
           <Tabs
             value={activePage}
             onValueChange={(v) => {
               setActivePage(v as PageKey);
               setSelectedId(null);
             }}
+            className="h-full"
           >
             <div className="flex items-center justify-between">
               <TabsList>
@@ -231,8 +235,13 @@ export default function Builder({
             </div>
 
             {PAGE_KEYS.map((page) => (
-              <TabsContent key={page} value={page} className="mt-4">
+              <TabsContent
+                key={page}
+                value={page}
+                className="h-full flex mt-4 overflow-y-scroll"
+              >
                 <Canvas
+                  business={business}
                   layout={layout[page]}
                   selectedId={selectedId}
                   onSelect={setSelectedId}

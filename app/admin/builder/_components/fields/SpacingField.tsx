@@ -15,9 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { SpacingProps } from "@/schema";
 import { useState } from "react";
-
-type Spacing = { top: number; bottom: number; left: number; right: number };
+import z from "zod";
 
 const [MIN, MAX] = [0, 50];
 
@@ -70,8 +70,8 @@ export default function SpacingField({
   label: "Padding" | "Margin";
   description: "inside" | "outside";
   accordionValue: string;
-  value: Spacing;
-  onChange: (spacing: Spacing) => void;
+  value: SpacingProps;
+  onChange: (spacing: SpacingProps) => void;
 }) {
   const [allEnabled, setAllEnabled] = useState(false);
   const [allValue, setAllValue] = useState(MIN);

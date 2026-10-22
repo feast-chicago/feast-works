@@ -10,10 +10,5 @@ export default async function BuilderPage() {
   const business = await getBusiness(user.publicMetadata.businesses[0].id);
   const layout: SiteLayout = SiteLayoutSchema.parse(business.layout ?? {});
 
-  return (
-    <div className="flex flex-col gap-10">
-      <h1 className="font-secondary text-4xl">Builder</h1>
-      <Builder initialLayout={layout} business={business} />
-    </div>
-  );
+  return <Builder initialLayout={layout} business={business} />;
 }

@@ -26,12 +26,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { BorderSchema, Business } from "@/schema";
+import { BorderProps, BorderSchema, Business } from "@/schema";
 import { useState } from "react";
-import z from "zod";
 
-type Border = z.infer<typeof BorderSchema>;
-type BorderStyle = Border["style"];
+type BorderStyle = BorderProps["style"];
 const [MIN, MAX] = [0, 50];
 
 export default function BorderField({
@@ -39,9 +37,9 @@ export default function BorderField({
   business,
   onChange,
 }: {
-  value: Border;
+  value: BorderProps;
   business: Business;
-  onChange: (border: Border) => void;
+  onChange: (border: BorderProps) => void;
 }) {
   const [width, setWidth] = useState(value.width ?? MIN);
   const [color, setColor] = useState(value.color ?? "");
@@ -52,7 +50,7 @@ export default function BorderField({
     secondary_color_foreground,
   } = business.theme;
 
-  function patch(partial: Partial<Border>) {
+  function patch(partial: Partial<BorderProps>) {
     onChange({ ...value, ...partial });
   }
 

@@ -20,7 +20,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toProperCase } from "@/lib/utils";
-import { AlignmentSchema, Business, FormatSchema } from "@/schema";
+import {
+  AlignmentProps,
+  AlignmentSchema,
+  Business,
+  FormatProps,
+  FormatSchema,
+} from "@/schema";
 import {
   Bold,
   Italic,
@@ -32,14 +38,10 @@ import {
   Underline,
 } from "lucide-react";
 import { useState } from "react";
-import z from "zod";
-
-type Alignment = z.infer<typeof AlignmentSchema>;
-type Format = z.infer<typeof FormatSchema>;
 
 type Text = {
-  alignment: Alignment;
-  format: Format;
+  alignment: AlignmentProps;
+  format: FormatProps;
   color: string;
 };
 
@@ -52,10 +54,10 @@ export default function TextField({
   business: Business;
   onChange: (text: Text) => void;
 }) {
-  const [alignment, setAlignment] = useState<Alignment>(
+  const [alignment, setAlignment] = useState<AlignmentProps>(
     value.alignment ?? "left",
   );
-  const [format, setFormat] = useState<Format>(value.format ?? []);
+  const [format, setFormat] = useState<FormatProps>(value.format ?? []);
   const [color, setColor] = useState<Text["color"]>(value.color ?? "");
 
   const {
@@ -124,7 +126,7 @@ export default function TextField({
                       value={format}
                       onClick={() => {
                         const f = option;
-                        const newFormat: Format = format.includes(f)
+                        const newFormat: FormatProps = format.includes(f)
                           ? format.filter((el) => el !== f)
                           : [...format, f];
 
