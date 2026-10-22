@@ -119,6 +119,27 @@ export function ImageBlock({ props, onChange }: BlockProps<ImageProps>) {
         ? "justify-end"
         : "justify-start";
 
+  const linkHref = props.link
+    ? props.link.type === "site_page"
+      ? `/${props.link.value}`
+      : props.link.type === "external_link"
+        ? (props.link.value ?? "#")
+        : props.link.type === "email"
+          ? `mailto:${props.link.value}`
+          : props.link.type === "phone"
+            ? `tel:${props.link.value}`
+            : undefined
+    : undefined;
+
+  const imageEl = (
+    <img
+      src={props.imageUrl || undefined}
+      alt={props.alt}
+      style={{ width: sizePx }}
+      className={props.isFullWidthOnMobile ? "w-full md:w-auto" : ""}
+    />
+  );
+
   return (
     <section
       className={`w-full h-fit flex ${justifyClass}`}
@@ -131,12 +152,16 @@ export function ImageBlock({ props, onChange }: BlockProps<ImageProps>) {
     >
       {props.imageUrl ? (
         <div className="flex flex-col items-center gap-2">
-          <img
-            src={props.imageUrl}
-            alt={props.alt ?? ""}
-            style={{ width: sizePx }}
-            className={props.isFullWidthOnMobile ? "w-full md:w-auto" : ""}
-          />
+          {linkHref ? (
+            <a
+              href={linkHref}
+              target={props.link?.type === "site_page" ? "_self" : "_blank"}
+            >
+              {imageEl}
+            </a>
+          ) : (
+            imageEl
+          )}
           {props.showCaption && props.caption && (
             <p className="text-xs text-muted-foreground">{props.caption}</p>
           )}

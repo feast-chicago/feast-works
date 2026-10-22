@@ -24,14 +24,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -50,6 +42,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { LinkField } from "./LinkField";
 
 const [MIN, MAX, DEFAULT] = [10, 50, 20];
 
@@ -269,30 +262,8 @@ export default function ImageField({
             </ButtonGroup>
           </Field>
 
-          {/* TODO: Link */}
-          {/* <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
-            <FieldLabel>Link</FieldLabel>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {[
-                    "Site page",
-                    "External link",
-                    "Email",
-                    "Document",
-                    "Phone",
-                  ].map((linkType) => (
-                    <SelectItem key={linkType} value={linkType}>
-                      {linkType}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field> */}
+          {/* Link */}
+          <LinkField value={value.link} onChange={(link) => patch({ link })} />
         </AccordionContent>
       </AccordionItem>
     </Accordion>
