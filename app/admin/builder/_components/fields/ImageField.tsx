@@ -1,3 +1,4 @@
+import { uploadImage } from "@/actions/business";
 import {
   Accordion,
   AccordionContent,
@@ -25,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
@@ -40,20 +42,24 @@ import {
   FileImage,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { toast } from "sonner";
 import { LinkField } from "./LinkField";
 
 const [MIN, MAX, DEFAULT] = [10, 50, 20];
 
 export default function ImageField({
+  businessId,
   value,
   onChange,
 }: {
+  businessId: string;
   value: ImageProps;
   onChange: (image: ImageProps) => void;
 }) {
   const [image, setImage] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(value.imageUrl);
   const [size, setSize] = useState(value.size ?? DEFAULT);
   const [alignment, setAlignment] = useState<AlignmentProps>(
@@ -69,17 +75,29 @@ export default function ImageField({
     onDrop: (files) => {
       const file = files[0];
       if (!file) return;
+      // const localPreview = URL.createObjectURL(file);
+
       setImage(file);
+      setIsUploading(true);
+      // setImageUrl(localPreview);
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const dataUrl = event.target?.result as string;
+      startTransition(async () => {
+        try {
+          const { publicUrl } = await uploadImage(file, businessId);
 
-        patch({ ...value, imageUrl: dataUrl });
-        setImageUrl(dataUrl);
-      };
-
-      reader.readAsDataURL(file);
+          // Swap local preview for the real URL
+          // URL.revokeObjectURL(localPreview);
+          setImageUrl(publicUrl);
+          patch({ imageUrl: publicUrl });
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Upload failed.");
+          setImage(null);
+          setImageUrl(null);
+          // URL.revokeObjectURL(localPreview);
+        } finally {
+          setIsUploading(false);
+        }
+      });
     },
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
@@ -108,7 +126,14 @@ export default function ImageField({
         <AccordionContent className="h-fit flex flex-col gap-5">
           {/* Image */}
           <span>
-            {image && imageUrl ? (
+            {isUploading ? (
+              <div className="w-full min-h-[163.5px] flex flex-col justify-center items-center">
+                <Spinner className="size-10 text-secondary" />
+                <p className="text-sm text-muted-foreground">
+                  Uploading image...
+                </p>
+              </div>
+            ) : image && imageUrl ? (
               // Image Preview
               <Attachment orientation="custom-vertical">
                 <AttachmentMedia variant="custom-image">

@@ -1,6 +1,6 @@
 "use client";
 
-import { uploadLogo } from "@/actions/business";
+import { uploadImage } from "@/actions/business";
 import ColorPickerPopover from "@/components/ColorPickerPopover";
 import {
   Attachment,
@@ -126,10 +126,9 @@ export default function BrandSettings({
     await setIsLoading(true);
 
     if (logo && primaryFont && secondaryFont) {
-      const logoPath = `${business.id}/logo-1`;
-      await uploadLogo(logo, logoPath)
-        .then((image) => {
-          const primary_logo_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${image.fullPath}`;
+      await uploadImage(logo, id)
+        .then((res) => {
+          const primary_logo_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${res.data.fullPath}`;
 
           const theme: Theme = {
             platform_theme: business.theme.platform_theme,

@@ -30,19 +30,40 @@ export async function getBusiness(id: string): Promise<Business> {
   return fetchBusinessCached(id);
 }
 
-export async function uploadLogo(
+export async function uploadImage(
   file: File,
-  pathname: string,
-): Promise<StorageItem> {
-  const { data, error } = await supabase()
+  businessId: string,
+): Promise<{
+  data: StorageItem;
+  publicUrl: string;
+}> {
+  if (!file) throw new Error("No file provided.");
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/svg+xml",
+  ];
+  if (!allowedTypes.includes(file.type))
+    throw new Error("Invalid file type. Use a JPG, JPEG, PNG, WebP, or SVG.");
+
+  if (file.size > 5 * 1024 * 1024)
+    throw new Error("File too large. Max size is 5MB.");
+
+  const pathname = `${businessId}/${file.name}`;
+
+  const { data: uploadData, error: uploadError } = await supabase()
     .storage.from("images")
-    .upload(pathname, file, {
-      upsert: true,
-      contentType: file.type,
-    });
+    .upload(pathname, file, { upsert: true, contentType: file.type });
 
-  if (error) throw new Error(`Failed to upload logo: ${error.message}`);
-  if (!data) throw new Error("Logo not found");
+  if (uploadError)
+    throw new Error(`Failed to upload image: ${uploadError.message}`);
+  if (!uploadData) throw new Error("Upload returned no data.");
 
-  return data as StorageItem;
+  const { data: urlData } = await supabase()
+    .storage.from("images")
+    .getPublicUrl(uploadData.path);
+
+  return { data: uploadData as StorageItem, publicUrl: urlData.publicUrl };
 }

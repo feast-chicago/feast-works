@@ -101,7 +101,11 @@ export function ImageBlockEditor({
 
   return (
     <BaseBlockEditor business={business} props={props} onChange={onChange}>
-      <ImageField value={props} onChange={(i) => update(i)} />
+      <ImageField
+        businessId={business.id}
+        value={props}
+        onChange={(i) => update(i)}
+      />
     </BaseBlockEditor>
   );
 }
