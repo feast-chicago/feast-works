@@ -233,16 +233,10 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
 // Block Registry
 type AnyBlockProps = { props: any; onChange: (newProps: any) => void };
 
-const blocks = {
+export const BLOCK_MAP: Partial<
+  Record<PageComponent["type"], React.ComponentType<AnyBlockProps>>
+> = {
   divider: DividerBlock,
   image: ImageBlock,
   text: TextBlock,
 };
-
-export const BLOCK_MAP: Partial<
-  Record<PageComponent["type"], React.ComponentType<AnyBlockProps>>
-> = { ...blocks };
-
-export const SECTION_MAP: Partial<
-  Record<PageComponent["type"], React.ComponentType<any>>
-> = { ...blocks };
