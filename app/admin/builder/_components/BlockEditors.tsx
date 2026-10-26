@@ -1,12 +1,19 @@
 "use client";
 
 import { FieldGroup } from "@/components/ui/field";
-import { BaseProps, Business, ImageProps, TextProps } from "@/schema";
+import {
+  BaseProps,
+  Business,
+  HeaderProps,
+  ImageProps,
+  TextProps,
+} from "@/schema";
 import BackgroundColorField from "./fields/BackgroundColorField";
 import BorderField from "./fields/BorderField";
+import HeaderField from "./fields/HeaderField";
+import ImageField from "./fields/ImageField";
 import SpacingField from "./fields/SpacingField";
 import TextField from "./fields/TextField";
-import ImageField from "./fields/ImageField";
 
 type BaseBlockEditorProps<T extends BaseProps> = {
   children: React.ReactNode;
@@ -72,15 +79,35 @@ export function TextBlockEditor({
   return (
     <BaseBlockEditor business={business} props={props} onChange={onChange}>
       <TextField
-        value={{
-          alignment: props.alignment,
-          format: props.format,
-          color: props.color,
-        }}
+        value={props}
         business={business}
         onChange={(t) =>
           update({ alignment: t.alignment, format: t.format, color: t.color })
         }
+      />
+    </BaseBlockEditor>
+  );
+}
+
+export function HeaderBlockEditor({
+  business,
+  props,
+  onChange,
+}: {
+  business: Business;
+  props: HeaderProps;
+  onChange: (props: TextProps) => void;
+}) {
+  function update(patch: Partial<TextProps>) {
+    onChange({ ...props, ...patch });
+  }
+
+  return (
+    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+      <HeaderField
+        value={props}
+        business={business}
+        onChange={(h) => update(h)}
       />
     </BaseBlockEditor>
   );

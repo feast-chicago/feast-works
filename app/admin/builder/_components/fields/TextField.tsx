@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/tooltip";
 import { toProperCase } from "@/lib/utils";
 import {
-  AlignmentProps,
   AlignmentSchema,
   Business,
   FormatProps,
   FormatSchema,
+  TextProps,
 } from "@/schema";
 import {
   Bold,
@@ -39,26 +39,20 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-type Text = {
-  alignment: AlignmentProps;
-  format: FormatProps;
-  color: string;
-};
-
 export default function TextField({
   value,
   business,
   onChange,
 }: {
-  value: Text;
+  value: TextProps;
   business: Business;
-  onChange: (text: Text) => void;
+  onChange: (text: TextProps) => void;
 }) {
-  const [alignment, setAlignment] = useState<AlignmentProps>(
+  const [alignment, setAlignment] = useState<TextProps["alignment"]>(
     value.alignment ?? "left",
   );
-  const [format, setFormat] = useState<FormatProps>(value.format ?? []);
-  const [color, setColor] = useState<Text["color"]>(value.color ?? "");
+  const [format, setFormat] = useState<TextProps["format"]>(value.format ?? []);
+  const [color, setColor] = useState<TextProps["color"]>(value.color ?? "");
 
   const {
     primary_color,
@@ -67,11 +61,8 @@ export default function TextField({
     secondary_color_foreground,
   } = business.theme;
 
-  function setAll(text: Text) {
-    setAlignment(text.alignment);
-    setFormat(text.format);
-    setColor(text.color);
-    onChange(text);
+  function patch(partial: Partial<TextProps>) {
+    onChange({ ...value, ...partial });
   }
 
   return (
@@ -90,7 +81,10 @@ export default function TextField({
                       size="icon-sm"
                       variant={alignment === option ? "secondary" : "outline"}
                       value={alignment}
-                      onClick={() => setAll({ ...value, alignment: option })}
+                      onClick={() => {
+                        setAlignment(alignment);
+                        patch({ alignment });
+                      }}
                     >
                       {option === "left" ? (
                         <TextAlignStart />
@@ -130,7 +124,8 @@ export default function TextField({
                           ? format.filter((el) => el !== f)
                           : [...format, f];
 
-                        setAll({ ...value, format: newFormat });
+                        setFormat(newFormat);
+                        patch({ format: newFormat });
                       }}
                     >
                       {option === "bold" ? (
@@ -164,7 +159,10 @@ export default function TextField({
                   autoComplete="off"
                   placeholder="Choose a color..."
                   value={color}
-                  onChange={(e) => setAll({ ...value, color: e.target.value })}
+                  onChange={(e) => {
+                    setColor(e.target.value);
+                    patch({ color: e.target.value });
+                  }}
                 />
                 <InputGroupAddon align="inline-start">
                   <ColorPickerPopover
@@ -185,7 +183,10 @@ export default function TextField({
                   backgroundColor: primary_color,
                   color: primary_color_foreground,
                 }}
-                onClick={() => setAll({ ...value, color: primary_color })}
+                onClick={() => {
+                  setColor(primary_color);
+                  patch({ color: primary_color });
+                }}
               >
                 Primary
               </Button>
@@ -196,7 +197,10 @@ export default function TextField({
                     backgroundColor: secondary_color,
                     color: secondary_color_foreground,
                   }}
-                  onClick={() => setAll({ ...value, color: secondary_color })}
+                  onClick={() => {
+                    setColor(secondary_color);
+                    patch({ color: secondary_color });
+                  }}
                 >
                   Secondary
                 </Button>

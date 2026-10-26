@@ -1,12 +1,17 @@
 import { Business, PageComponent } from "@/schema";
 import { X } from "lucide-react";
-import { ImageBlockEditor, TextBlockEditor } from "./BlockEditor";
+import {
+  HeaderBlockEditor,
+  ImageBlockEditor,
+  TextBlockEditor,
+} from "./BlockEditors";
 
 const editors: Partial<
   Record<PageComponent["type"], React.ComponentType<any>>
 > = {
-  text: TextBlockEditor,
+  header: HeaderBlockEditor,
   image: ImageBlockEditor,
+  text: TextBlockEditor,
 };
 
 interface PropsPanelProps {

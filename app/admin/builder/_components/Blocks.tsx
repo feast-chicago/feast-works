@@ -1,7 +1,13 @@
 "use client";
 
 import { IS_INLINE_EDITING_ALLOWED } from "@/lib/utils";
-import { DividerProps, ImageProps, PageComponent, TextProps } from "@/schema";
+import {
+  DividerProps,
+  HeaderProps,
+  ImageProps,
+  PageComponent,
+  TextProps,
+} from "@/schema";
 import { ImageOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -106,7 +112,68 @@ export function DividerBlock({
   );
 }
 
-export function ImageBlock({ props, onChange }: BlockProps<ImageProps>) {
+export function HeaderBlock({ props, onChange }: BlockProps<HeaderProps>) {
+  const {
+    alignment,
+    backgroundColor,
+    body,
+    border,
+    color,
+    format,
+    margin,
+    padding,
+  } = props;
+  const alignClass =
+    alignment === "center"
+      ? "text-center items-center"
+      : alignment === "right"
+        ? "text-right items-end"
+        : alignment === "justify"
+          ? "text-justify"
+          : "text-left items-start";
+
+  const formatClass = format
+    ? `${format.includes("bold") ? "!font-bold" : ""} ${format.includes("italic") ? "!italic" : ""}`
+    : "font-normal";
+
+  const sizeMap = {
+    h1: "text-5xl",
+    h2: "text-4xl",
+    h3: "text-3xl",
+    h4: "text-2xl",
+    h5: "text-xl",
+    h6: "text-lg",
+  };
+
+  return (
+    <section
+      className={`flex flex-col gap-4 ${[alignClass, formatClass].filter((c) => c !== "").join(" ")}`}
+      style={{
+        backgroundColor,
+        border: `${border.width}px ${border.style.toLowerCase()} ${border.color}`,
+        color,
+        margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+        textDecoration: format
+          ? `${format.includes("underline") ? "underline" : ""} ${format.includes("strikethrough") ? "line-through" : ""}`
+          : "none",
+      }}
+    >
+      {body !== null && (
+        <InlineEdit
+          as={props.level}
+          value={body}
+          onChange={(v) => onChange({ ...props, body: v })}
+          placeholder="Add a header here..."
+          isEditingAllowed={IS_INLINE_EDITING_ALLOWED}
+          className={`${sizeMap[props.level ?? "h2"]}`}
+        />
+      )}
+    </section>
+  );
+}
+
+export function ImageBlock({ props }: BlockProps<ImageProps>) {
   const { alignment, backgroundColor, border, margin, padding } = props;
 
   const sizeMultiplier = 10;
@@ -237,6 +304,7 @@ export const BLOCK_MAP: Partial<
   Record<PageComponent["type"], React.ComponentType<AnyBlockProps>>
 > = {
   divider: DividerBlock,
+  header: HeaderBlock,
   image: ImageBlock,
   text: TextBlock,
 };
