@@ -32,7 +32,7 @@ import { useState } from "react";
 type BorderStyle = BorderProps["style"];
 const [MIN, MAX] = [0, 50];
 
-export default function BorderField({
+export default function BorderSettings({
   value,
   business,
   onChange,

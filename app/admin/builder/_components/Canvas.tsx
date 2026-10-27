@@ -71,7 +71,10 @@ export default function Canvas({
 
         <span className="mx-auto w-1/2 h-7.5 flex px-1.5 py-1 gap-0.5 border border-border/40 justify-between items-center rounded-full">
           <TvMinimal className="size-3.5" />
-          <Link href={business.site_urls[business.site_urls.length - 1]} target="_blank">
+          <Link
+            href={business.site_urls[business.site_urls.length - 1]}
+            target="_blank"
+          >
             {business.site_urls[business.site_urls.length - 1].split("//")[1]}
           </Link>
           <RotateCw className="size-3.5" />
@@ -122,6 +125,7 @@ export default function Canvas({
                       onChange={(newProps) =>
                         onPropsChange(component.id, newProps)
                       }
+                      theme={business.theme}
                     />
                   ) : (
                     <div className="px-8 py-10 bg-muted/30 rounded-lg flex items-center justify-center">

@@ -18,7 +18,7 @@ import {
 import { Business } from "@/schema";
 import { useState } from "react";
 
-export default function BackgroundColorField({
+export default function BackgroundColorSettings({
   value,
   business,
   onChange,

@@ -1,6 +1,7 @@
 import { Business, PageComponent } from "@/schema";
 import { X } from "lucide-react";
 import {
+  ButtonBlockEditor,
   HeaderBlockEditor,
   ImageBlockEditor,
   TextBlockEditor,
@@ -9,6 +10,7 @@ import {
 const editors: Partial<
   Record<PageComponent["type"], React.ComponentType<any>>
 > = {
+  button: ButtonBlockEditor,
   header: HeaderBlockEditor,
   image: ImageBlockEditor,
   text: TextBlockEditor,

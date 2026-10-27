@@ -14,8 +14,6 @@ import {
   AttachmentMedia,
   AttachmentTitle,
 } from "@/components/ui/attachment";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
@@ -28,28 +26,18 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { formatBytes, toProperCase } from "@/lib/utils";
-import { AlignmentProps, AlignmentSchema, ImageProps } from "@/schema";
-import {
-  AlignCenterVertical,
-  AlignEndVertical,
-  AlignStartVertical,
-  FileImage,
-  X,
-} from "lucide-react";
+import { formatBytes } from "@/lib/utils";
+import { AlignmentProps, ImageProps } from "@/schema";
+import { FileImage, X } from "lucide-react";
 import { startTransition, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { LinkField } from "./LinkField";
+import AlignmentField from "../_fields/AlignmentField";
+import { LinkField } from "../_fields/LinkField";
 
 const [MIN, MAX, DEFAULT] = [10, 50, 20];
 
-export default function ImageField({
+export default function ImageSettings({
   businessId,
   value,
   onChange,
@@ -251,43 +239,13 @@ export default function ImageField({
             <Label htmlFor="show-caption">Show caption</Label>
           </Field>
 
-          {/* Alignment */}
-          <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
-            <FieldLabel>Alignment</FieldLabel>
-            <ButtonGroup>
-              {AlignmentSchema.options
-                .filter((option) => option !== "justify")
-                .map((option) => (
-                  <Tooltip key={option}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="icon-sm"
-                        variant={alignment === option ? "secondary" : "outline"}
-                        onClick={() => {
-                          setAlignment(option);
-                          patch({ alignment: option });
-                        }}
-                      >
-                        {option === "left" ? (
-                          <AlignStartVertical />
-                        ) : option === "center" ? (
-                          <AlignCenterVertical />
-                        ) : option === "right" ? (
-                          <AlignEndVertical />
-                        ) : (
-                          <></>
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{toProperCase(option)} align</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-            </ButtonGroup>
-          </Field>
+          <AlignmentField
+            alignment={alignment}
+            setAlignment={setAlignment}
+            patch={patch}
+            excludeJustify
+          />
 
-          {/* Link */}
           <LinkField value={value.link} onChange={(link) => patch({ link })} />
         </AccordionContent>
       </AccordionItem>

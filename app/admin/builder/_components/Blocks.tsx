@@ -2,18 +2,20 @@
 
 import { IS_INLINE_EDITING_ALLOWED } from "@/lib/utils";
 import {
+  ButtonProps,
   DividerProps,
   HeaderProps,
   ImageProps,
   PageComponent,
   TextProps,
+  Theme,
 } from "@/schema";
 import { ImageOff } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { HTMLAttributeAnchorTarget, useEffect, useRef, useState } from "react";
 
 /**
  * Wraps any text element and makes it inline-editable on double-click.
- * Single click selects the component, double click enters edit mode.
+ * A single-click selects the component, while a double-click enters edit mode.
  */
 export function InlineEdit({
   value,
@@ -84,8 +86,160 @@ export function InlineEdit({
   );
 }
 
+/**
+ * Gets color details for elements with variant styles.
+ */
+export function getVariantStyles(
+  variant: ButtonProps["variant"],
+  theme: Theme | undefined,
+  colorOverride?: string,
+): React.CSSProperties {
+  const primary = theme?.primary_color ?? "oklch(0.205 0 0)";
+  const primaryFg = theme?.primary_color_foreground ?? "oklch(0.985 0 0)";
+  const secondary = theme?.secondary_color ?? "oklch(0.97 0 0)";
+  const secondaryFg = theme?.secondary_color_foreground ?? "oklch(0.205 0 0)";
+
+  switch (variant) {
+    case "default":
+      return { backgroundColor: primary, color: colorOverride || primaryFg };
+    case "secondary":
+      return {
+        backgroundColor: secondary,
+        color: colorOverride || secondaryFg,
+      };
+    case "outline":
+      return {
+        backgroundColor: "transparent",
+        color: colorOverride || primary,
+        border: `1px solid ${primary}`,
+      };
+    case "ghost":
+      return {
+        backgroundColor: "transparent",
+        color: colorOverride || primary,
+      };
+    case "destructive":
+      return { backgroundColor: "#ef4444", color: "#ffffff" };
+    case "link":
+      return {
+        backgroundColor: "transparent",
+        color: colorOverride || primary,
+        textDecoration: "underline",
+        padding: "0",
+      };
+    default:
+      return { backgroundColor: primary, color: primaryFg };
+  }
+}
+
 // Blocks
-type BlockProps<T> = { props: T; onChange: (newProps: T) => void };
+type BlockProps<T> = {
+  props: T;
+  onChange: (newProps: T) => void;
+  theme?: Theme;
+};
+
+export function ButtonBlock({
+  props,
+  onChange,
+  theme,
+}: BlockProps<ButtonProps>) {
+  const { alignment, format, isFullWidth, link, size, variant } = props;
+
+  const alignClass =
+    alignment === "center"
+      ? "justify-center"
+      : alignment === "right"
+        ? "justify-end"
+        : "justify-start";
+
+  const sizeMap = {
+    default: "h-9 px-2.5",
+    "extra small": "h-6 px-2",
+    small: "h-8 px-2.5",
+    large: "h-10 px-2.5",
+  };
+
+  const formatClass = format
+    ? [
+        format.includes("bold") ? "font-bold" : "",
+        format.includes("italic") ? "italic" : "",
+        format.includes("underline") ? "underline" : "",
+        format.includes("strikethrough") ? "line-through" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")
+    : "";
+
+  const variantStyles = getVariantStyles(
+    variant ?? "default",
+    theme,
+    // color || undefined, // For overriding text color with a color prop
+  );
+
+  const linkHref = link
+    ? link.type === "site_page"
+      ? `/${link.value}`
+      : link.type === "external_link"
+        ? (link.value ?? "#")
+        : link.type === "email"
+          ? `mailto:${link.value}`
+          : link.type === "phone"
+            ? `tel:${link.value}`
+            : "#"
+    : "#";
+
+  const target: HTMLAttributeAnchorTarget =
+    link?.type === "site_page" ? "_self" : "_blank";
+
+  const buttonEl = (
+    <span
+      role="button"
+      style={variantStyles}
+      className={`
+        group/button inline-flex shrink-0 items-center justify-center rounded-md bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 cursor-pointer hover:opacity-80
+        ${isFullWidth ? "w-full" : "w-fit"} 
+        ${sizeMap[size ?? "default"]}
+        ${formatClass}
+      `}
+    >
+      <InlineEdit
+        as="span"
+        value={props.label}
+        onChange={(v) => onChange({ ...props, label: v })}
+        placeholder="Button label"
+        isEditingAllowed={IS_INLINE_EDITING_ALLOWED}
+        className="pointer-events-auto w-full text-center"
+      />
+    </span>
+  );
+
+  return (
+    <section
+      className={`w-full flex ${alignClass}`}
+      style={{
+        backgroundColor: props.backgroundColor || undefined,
+        border: props.border.width
+          ? `${props.border.width}px ${props.border.style.toLowerCase()} ${props.border.color}`
+          : undefined,
+        margin: `${props.margin.top}px ${props.margin.right}px ${props.margin.bottom}px ${props.margin.left}px`,
+        padding: `${props.padding.top}px ${props.padding.right}px ${props.padding.bottom}px ${props.padding.left}px`,
+      }}
+    >
+      {link ? (
+        <a
+          href={linkHref}
+          target={target}
+          className={isFullWidth ? "w-full" : "w-fit"}
+        >
+          {buttonEl}
+        </a>
+      ) : (
+        buttonEl
+      )}
+    </section>
+  );
+}
 
 export function DividerBlock({
   props,
@@ -298,11 +452,16 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
 }
 
 // Block Registry
-type AnyBlockProps = { props: any; onChange: (newProps: any) => void };
+type AnyBlockProps = {
+  props: any;
+  onChange: (newProps: any) => void;
+  theme?: Theme;
+};
 
 export const BLOCK_MAP: Partial<
   Record<PageComponent["type"], React.ComponentType<AnyBlockProps>>
 > = {
+  button: ButtonBlock,
   divider: DividerBlock,
   header: HeaderBlock,
   image: ImageBlock,

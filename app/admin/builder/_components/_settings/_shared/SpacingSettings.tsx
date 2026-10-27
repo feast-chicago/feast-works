@@ -60,7 +60,7 @@ function SpacingSlider({
   );
 }
 
-export default function SpacingField({
+export default function SpacingSettings({
   label,
   description,
   accordionValue,

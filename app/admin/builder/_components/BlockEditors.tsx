@@ -4,16 +4,18 @@ import { FieldGroup } from "@/components/ui/field";
 import {
   BaseProps,
   Business,
+  ButtonProps,
   HeaderProps,
   ImageProps,
   TextProps,
 } from "@/schema";
-import BackgroundColorField from "./fields/BackgroundColorField";
-import BorderField from "./fields/BorderField";
-import HeaderField from "./fields/HeaderField";
-import ImageField from "./fields/ImageField";
-import SpacingField from "./fields/SpacingField";
-import TextField from "./fields/TextField";
+import BackgroundColorSettings from "./_settings/_shared/BackgroundColorSettings";
+import BorderSettings from "./_settings/_shared/BorderSettings";
+import SpacingSettings from "./_settings/_shared/SpacingSettings";
+import ButtonSettings from "./_settings/ButtonSettings";
+import HeaderSettings from "./_settings/HeaderSettings";
+import ImageSettings from "./_settings/ImageSettings";
+import TextSettings from "./_settings/TextSettings";
 
 type BaseBlockEditorProps<T extends BaseProps> = {
   children: React.ReactNode;
@@ -35,24 +37,24 @@ export function BaseBlockEditor<T extends BaseProps>({
   return (
     <FieldGroup className="h-full overflow-y-scroll">
       {children}
-      <BackgroundColorField
+      <BackgroundColorSettings
         value={props.backgroundColor}
         business={business}
         onChange={(c) => update({ backgroundColor: c })}
       />
-      <BorderField
+      <BorderSettings
         value={props.border}
         business={business}
         onChange={(b) => update({ border: b })}
       />
-      <SpacingField
+      <SpacingSettings
         label="Padding"
         description="inside"
         accordionValue="padding"
         value={props.padding}
         onChange={(p) => update({ padding: p })}
       />
-      <SpacingField
+      <SpacingSettings
         label="Margin"
         description="outside"
         accordionValue="margin"
@@ -63,27 +65,25 @@ export function BaseBlockEditor<T extends BaseProps>({
   );
 }
 
-export function TextBlockEditor({
+export function ButtonBlockEditor({
   business,
   props,
   onChange,
 }: {
   business: Business;
-  props: TextProps;
-  onChange: (props: TextProps) => void;
+  props: ButtonProps;
+  onChange: (props: ButtonProps) => void;
 }) {
-  function update(patch: Partial<TextProps>) {
+  function update(patch: Partial<ButtonProps>) {
     onChange({ ...props, ...patch });
   }
 
   return (
     <BaseBlockEditor business={business} props={props} onChange={onChange}>
-      <TextField
+      <ButtonSettings
         value={props}
-        business={business}
-        onChange={(t) =>
-          update({ alignment: t.alignment, format: t.format, color: t.color })
-        }
+        // business={business}
+        onChange={(h) => update(h)}
       />
     </BaseBlockEditor>
   );
@@ -96,15 +96,15 @@ export function HeaderBlockEditor({
 }: {
   business: Business;
   props: HeaderProps;
-  onChange: (props: TextProps) => void;
+  onChange: (props: HeaderProps) => void;
 }) {
-  function update(patch: Partial<TextProps>) {
+  function update(patch: Partial<HeaderProps>) {
     onChange({ ...props, ...patch });
   }
 
   return (
     <BaseBlockEditor business={business} props={props} onChange={onChange}>
-      <HeaderField
+      <HeaderSettings
         value={props}
         business={business}
         onChange={(h) => update(h)}
@@ -128,10 +128,36 @@ export function ImageBlockEditor({
 
   return (
     <BaseBlockEditor business={business} props={props} onChange={onChange}>
-      <ImageField
+      <ImageSettings
         businessId={business.id}
         value={props}
         onChange={(i) => update(i)}
+      />
+    </BaseBlockEditor>
+  );
+}
+
+export function TextBlockEditor({
+  business,
+  props,
+  onChange,
+}: {
+  business: Business;
+  props: TextProps;
+  onChange: (props: TextProps) => void;
+}) {
+  function update(patch: Partial<TextProps>) {
+    onChange({ ...props, ...patch });
+  }
+
+  return (
+    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+      <TextSettings
+        value={props}
+        business={business}
+        onChange={(t) =>
+          update({ alignment: t.alignment, format: t.format, color: t.color })
+        }
       />
     </BaseBlockEditor>
   );
