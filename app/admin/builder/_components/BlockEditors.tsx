@@ -4,32 +4,34 @@ import { FieldGroup } from "@/components/ui/field";
 import {
   BaseProps,
   Business,
-  ButtonProps,
-  HeaderProps,
-  ImageProps,
-  TextProps,
+  Button,
+  Divider,
+  Header,
+  Image,
+  Text,
 } from "@/schema";
 import BackgroundColorSettings from "./_settings/_shared/BackgroundColorSettings";
 import BorderSettings from "./_settings/_shared/BorderSettings";
 import SpacingSettings from "./_settings/_shared/SpacingSettings";
 import ButtonSettings from "./_settings/ButtonSettings";
+import DividerSettings from "./_settings/DividerSettings";
 import HeaderSettings from "./_settings/HeaderSettings";
 import ImageSettings from "./_settings/ImageSettings";
 import TextSettings from "./_settings/TextSettings";
 
-type BaseBlockEditorProps<T extends BaseProps> = {
+type BaseEditorProps<T extends BaseProps> = {
   children: React.ReactNode;
   business: Business;
   props: T;
   onChange: (props: T) => void;
 };
 
-export function BaseBlockEditor<T extends BaseProps>({
+export function BaseEditor<T extends BaseProps>({
   children,
   business,
   props,
   onChange,
-}: BaseBlockEditorProps<T>) {
+}: BaseEditorProps<T>) {
   function update(patch: Partial<BaseProps>) {
     onChange({ ...props, ...patch });
   }
@@ -65,100 +67,128 @@ export function BaseBlockEditor<T extends BaseProps>({
   );
 }
 
-export function ButtonBlockEditor({
+export function ButtonEditor({
   business,
   props,
   onChange,
 }: {
   business: Business;
-  props: ButtonProps;
-  onChange: (props: ButtonProps) => void;
+  props: Button;
+  onChange: (props: Button) => void;
 }) {
-  function update(patch: Partial<ButtonProps>) {
+  function update(patch: Partial<Button>) {
     onChange({ ...props, ...patch });
   }
 
   return (
-    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+    <BaseEditor business={business} props={props} onChange={onChange}>
       <ButtonSettings
         value={props}
         // business={business}
         onChange={(h) => update(h)}
       />
-    </BaseBlockEditor>
+    </BaseEditor>
   );
 }
 
-export function HeaderBlockEditor({
+export function DividerEditor({
   business,
   props,
   onChange,
 }: {
   business: Business;
-  props: HeaderProps;
-  onChange: (props: HeaderProps) => void;
+  props: Divider;
+  onChange: (props: Divider) => void;
 }) {
-  function update(patch: Partial<HeaderProps>) {
+  function update(patch: Partial<Divider>) {
     onChange({ ...props, ...patch });
   }
 
   return (
-    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+    <BaseEditor business={business} props={props} onChange={onChange}>
+      <DividerSettings
+        value={props}
+        business={business}
+        onChange={(h) => update(h)}
+      />
+    </BaseEditor>
+  );
+}
+
+export function HeaderEditor({
+  business,
+  props,
+  onChange,
+}: {
+  business: Business;
+  props: Header;
+  onChange: (props: Header) => void;
+}) {
+  function update(patch: Partial<Header>) {
+    onChange({ ...props, ...patch });
+  }
+
+  return (
+    <BaseEditor business={business} props={props} onChange={onChange}>
       <HeaderSettings
         value={props}
         business={business}
         onChange={(h) => update(h)}
       />
-    </BaseBlockEditor>
+    </BaseEditor>
   );
 }
 
-export function ImageBlockEditor({
+export function ImageEditor({
   business,
   props,
   onChange,
 }: {
   business: Business;
-  props: ImageProps;
-  onChange: (props: ImageProps) => void;
+  props: Image;
+  onChange: (props: Image) => void;
 }) {
-  function update(patch: Partial<ImageProps>) {
+  function update(patch: Partial<Image>) {
     onChange({ ...props, ...patch });
   }
 
   return (
-    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+    <BaseEditor business={business} props={props} onChange={onChange}>
       <ImageSettings
         businessId={business.id}
         value={props}
         onChange={(i) => update(i)}
       />
-    </BaseBlockEditor>
+    </BaseEditor>
   );
 }
 
-export function TextBlockEditor({
+export function TextEditor({
   business,
   props,
   onChange,
 }: {
   business: Business;
-  props: TextProps;
-  onChange: (props: TextProps) => void;
+  props: Text;
+  onChange: (props: Text) => void;
 }) {
-  function update(patch: Partial<TextProps>) {
+  function update(patch: Partial<Text>) {
     onChange({ ...props, ...patch });
   }
 
   return (
-    <BaseBlockEditor business={business} props={props} onChange={onChange}>
+    <BaseEditor business={business} props={props} onChange={onChange}>
       <TextSettings
         value={props}
         business={business}
         onChange={(t) =>
-          update({ alignment: t.alignment, format: t.format, color: t.color })
+          update({
+            alignment: t.alignment,
+            textFormat: t.textFormat,
+            color: t.color,
+          })
         }
       />
-    </BaseBlockEditor>
+    </BaseEditor>
   );
 }

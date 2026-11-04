@@ -13,40 +13,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ButtonProps, ButtonPropsSchema } from "@/schema";
+import { toProperCase } from "@/lib/utils";
+import { Button, ButtonSchema } from "@/schema";
 import { useState } from "react";
 import AlignmentField from "../_fields/AlignmentField";
-import FormatField from "../_fields/FormatField";
 import { LinkField } from "../_fields/LinkField";
-import { toProperCase } from "@/lib/utils";
+import TextFormatField from "../_fields/TextFormatField";
 
 export default function ButtonSettings({
   value,
   // business,
   onChange,
 }: {
-  value: ButtonProps;
+  value: Button;
   // business: Business;
-  onChange: (text: ButtonProps) => void;
+  onChange: (text: Button) => void;
 }) {
-  const [alignment, setAlignment] = useState<ButtonProps["alignment"]>(
+  const [alignment, setAlignment] = useState<Button["alignment"]>(
     value.alignment ?? "left",
   );
-  // const [color, setColor] = useState<ButtonProps["color"]>(value.color ?? "");
-  const [format, setFormat] = useState<ButtonProps["format"]>(
-    value.format ?? [],
+  // const [color, setColor] = useState<Button["color"]>(value.color ?? "");
+  const [textFormat, setTextFormat] = useState<Button["textFormat"]>(
+    value.textFormat ?? [],
   );
-  const [isFullWidth, setIsFullWidth] = useState<ButtonProps["isFullWidth"]>(
+  const [isFullWidth, setIsFullWidth] = useState<Button["isFullWidth"]>(
     value.isFullWidth ?? false,
   );
-  const [size, setSize] = useState<ButtonProps["size"]>(
-    value.size ?? "default",
-  );
-  const [variant, setVariant] = useState<ButtonProps["variant"]>(
+  const [size, setSize] = useState<Button["size"]>(value.size ?? "default");
+  const [variant, setVariant] = useState<Button["variant"]>(
     value.variant ?? "default",
   );
 
-  function patch(partial: Partial<ButtonProps>) {
+  function patch(partial: Partial<Button>) {
     onChange({ ...value, ...partial });
   }
 
@@ -60,7 +58,7 @@ export default function ButtonSettings({
             <FieldLabel>Style</FieldLabel>
             <Select
               value={variant}
-              onValueChange={(variant: ButtonProps["variant"]) => {
+              onValueChange={(variant: Button["variant"]) => {
                 setVariant(variant);
                 patch({ variant });
               }}
@@ -70,7 +68,7 @@ export default function ButtonSettings({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {ButtonPropsSchema.shape.variant.options.map((v) => (
+                  {ButtonSchema.shape.variant.options.map((v) => (
                     <SelectItem key={v} value={v}>
                       {toProperCase(v)}
                     </SelectItem>
@@ -85,7 +83,7 @@ export default function ButtonSettings({
             <FieldLabel>Size</FieldLabel>
             <Select
               value={size}
-              onValueChange={(size: ButtonProps["size"]) => {
+              onValueChange={(size: Button["size"]) => {
                 setSize(size);
                 patch({ size });
               }}
@@ -95,7 +93,7 @@ export default function ButtonSettings({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {ButtonPropsSchema.shape.size.options.map((s) => (
+                  {ButtonSchema.shape.size.options.map((s) => (
                     <SelectItem key={s} value={s}>
                       {toProperCase(s)}
                     </SelectItem>
@@ -115,7 +113,11 @@ export default function ButtonSettings({
             isButton
           />
 
-          <FormatField format={format} setFormat={setFormat} patch={patch} />
+          <TextFormatField
+            textFormat={textFormat}
+            setTextFormat={setTextFormat}
+            patch={patch}
+          />
 
           {/* <TextColorField
             business={business}

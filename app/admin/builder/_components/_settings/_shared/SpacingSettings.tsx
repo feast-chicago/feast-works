@@ -15,9 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { SpacingProps } from "@/schema";
+import { Spacing } from "@/schema";
 import { useState } from "react";
-import z from "zod";
 
 const [MIN, MAX] = [0, 50];
 
@@ -70,8 +69,8 @@ export default function SpacingSettings({
   label: "Padding" | "Margin";
   description: "inside" | "outside";
   accordionValue: string;
-  value: SpacingProps;
-  onChange: (spacing: SpacingProps) => void;
+  value: Spacing;
+  onChange: (spacing: Spacing) => void;
 }) {
   const [allEnabled, setAllEnabled] = useState(false);
   const [allValue, setAllValue] = useState(MIN);

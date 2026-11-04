@@ -8,11 +8,9 @@ import {
 import { PageComponent } from "@/schema";
 import { useDraggable } from "@dnd-kit/core";
 import {
-  Clock,
   HeartPlus,
   Image,
   MapPin,
-  MessageSquareHeart,
   SquareDashedMousePointer,
   TextAlignStart,
   Type,
@@ -28,13 +26,13 @@ const AVAILABLE_COMPONENTS: {
   {
     type: "header",
     label: "Header",
-    description: "Heading",
+    description: "Add a header",
     icon: <Type className="size-7" />,
   },
   {
     type: "text",
     label: "Text",
-    description: "Body text",
+    description: "Add a text section",
     icon: <TextAlignStart className="size-7" />,
   },
   {
@@ -46,39 +44,39 @@ const AVAILABLE_COMPONENTS: {
   {
     type: "button",
     label: "Button",
-    description: "Interactive button",
+    description: "Add a button",
     icon: <SquareDashedMousePointer className="size-7" />,
-  },
-  {
-    type: "hours",
-    label: "Hours",
-    description: "Operating hours and contact info",
-    icon: <Clock className="size-7" />,
-  },
-  {
-    type: "reviews",
-    label: "Review",
-    description: "Customer reviews",
-    icon: <MessageSquareHeart className="size-7" />,
   },
   {
     type: "social",
     label: "Social",
-    description: "Social media links",
+    description: "Add social media links",
     icon: <HeartPlus className="size-7" />,
   },
   {
     type: "map",
     label: "Map",
-    description: "Your location on a map",
+    description: "Add your location on a map",
     icon: <MapPin className="size-7" />,
   },
   {
     type: "divider",
     label: "Divider",
-    description: "A visual break between sections",
+    description: "Add a visual break between sections",
     icon: <UnfoldVertical className="size-7" />,
   },
+  // {
+  //   type: "hours",
+  //   label: "Hours",
+  //   description: "Operating hours and contact info",
+  //   icon: <Clock className="size-7" />,
+  // },
+  // {
+  //   type: "reviews",
+  //   label: "Review",
+  //   description: "Customer reviews",
+  //   icon: <MessageSquareHeart className="size-7" />,
+  // },
 ];
 
 export default function Palette({

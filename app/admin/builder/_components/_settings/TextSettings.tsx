@@ -4,28 +4,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Business, TextProps } from "@/schema";
+import { Business, Text } from "@/schema";
 import { useState } from "react";
 import AlignmentField from "../_fields/AlignmentField";
-import FormatField from "../_fields/FormatField";
 import TextColorField from "../_fields/TextColorField";
+import FormatField from "../_fields/TextFormatField";
 
 export default function TextSettings({
   value,
   business,
   onChange,
 }: {
-  value: TextProps;
+  value: Text;
   business: Business;
-  onChange: (text: TextProps) => void;
+  onChange: (text: Text) => void;
 }) {
-  const [alignment, setAlignment] = useState<TextProps["alignment"]>(
+  const [alignment, setAlignment] = useState<Text["alignment"]>(
     value.alignment ?? "left",
   );
-  const [format, setFormat] = useState<TextProps["format"]>(value.format ?? []);
-  const [color, setColor] = useState<TextProps["color"]>(value.color ?? "");
+  const [textFormat, setTextFormat] = useState<Text["textFormat"]>(
+    value.textFormat ?? [],
+  );
+  const [color, setColor] = useState<Text["color"]>(value.color ?? "");
 
-  function patch(partial: Partial<TextProps>) {
+  function patch(partial: Partial<Text>) {
     onChange({ ...value, ...partial });
   }
 
@@ -41,7 +43,11 @@ export default function TextSettings({
             isText
           />
 
-          <FormatField format={format} setFormat={setFormat} patch={patch} />
+          <FormatField
+            textFormat={textFormat}
+            setTextFormat={setTextFormat}
+            patch={patch}
+          />
 
           <TextColorField
             business={business}

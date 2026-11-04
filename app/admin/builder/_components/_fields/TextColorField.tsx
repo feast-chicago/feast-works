@@ -7,7 +7,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Business, HeaderProps } from "@/schema";
+import { Business, Header } from "@/schema";
 import { Dispatch, SetStateAction } from "react";
 
 export default function TextColorField({
@@ -17,9 +17,9 @@ export default function TextColorField({
   patch,
 }: {
   business: Business;
-  color: HeaderProps["color"];
-  setColor: Dispatch<SetStateAction<HeaderProps["color"]>>;
-  patch: (partial: { color: HeaderProps["color"] }) => void;
+  color: Header["color"];
+  setColor: Dispatch<SetStateAction<Header["color"]>>;
+  patch: (partial: { color: Header["color"] }) => void;
 }) {
   const {
     primary_color,

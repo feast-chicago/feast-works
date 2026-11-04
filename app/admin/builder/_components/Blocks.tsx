@@ -2,12 +2,12 @@
 
 import { IS_INLINE_EDITING_ALLOWED } from "@/lib/utils";
 import {
-  ButtonProps,
-  DividerProps,
-  HeaderProps,
-  ImageProps,
+  Button,
+  Divider,
+  Header,
+  Image,
   PageComponent,
-  TextProps,
+  Text,
   Theme,
 } from "@/schema";
 import { ImageOff } from "lucide-react";
@@ -90,7 +90,7 @@ export function InlineEdit({
  * Gets color details for elements with variant styles.
  */
 export function getVariantStyles(
-  variant: ButtonProps["variant"],
+  variant: Button["variant"],
   theme: Theme | undefined,
   colorOverride?: string,
 ): React.CSSProperties {
@@ -139,12 +139,8 @@ type BlockProps<T> = {
   theme?: Theme;
 };
 
-export function ButtonBlock({
-  props,
-  onChange,
-  theme,
-}: BlockProps<ButtonProps>) {
-  const { alignment, format, isFullWidth, link, size, variant } = props;
+export function ButtonBlock({ props, onChange, theme }: BlockProps<Button>) {
+  const { alignment, isFullWidth, link, size, textFormat, variant } = props;
 
   const alignClass =
     alignment === "center"
@@ -160,12 +156,12 @@ export function ButtonBlock({
     large: "h-10 px-2.5",
   };
 
-  const formatClass = format
+  const formatClass = textFormat
     ? [
-        format.includes("bold") ? "font-bold" : "",
-        format.includes("italic") ? "italic" : "",
-        format.includes("underline") ? "underline" : "",
-        format.includes("strikethrough") ? "line-through" : "",
+        textFormat.includes("bold") ? "font-bold" : "",
+        textFormat.includes("italic") ? "italic" : "",
+        textFormat.includes("underline") ? "underline" : "",
+        textFormat.includes("strikethrough") ? "line-through" : "",
       ]
         .filter(Boolean)
         .join(" ")
@@ -244,14 +240,19 @@ export function ButtonBlock({
 export function DividerBlock({
   props,
 }: {
-  props: DividerProps;
-  onChange: (p: DividerProps) => void;
+  props: Divider;
+  onChange: (p: Divider) => void;
 }) {
-  const spacingMap = { sm: "py-4", md: "py-8", lg: "py-16" };
-
+  const { border, color, margin, padding } = props;
   return (
-    <div
-      className={`px-8 ${spacingMap[props.spacing]} flex items-center gap-3`}
+    <section
+      className="px-8 flex items-center gap-3"
+      style={{
+        border: `${border.width}px ${border.style.toLowerCase()} ${border.color}`,
+        color,
+        margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
+        padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
+      }}
     >
       {props.style === "line" && <div className="flex-1 h-px bg-border" />}
       {props.style === "dots" && (
@@ -262,20 +263,20 @@ export function DividerBlock({
         </div>
       )}
       {props.style === "blank" && <div className="flex-1" />}
-    </div>
+    </section>
   );
 }
 
-export function HeaderBlock({ props, onChange }: BlockProps<HeaderProps>) {
+export function HeaderBlock({ props, onChange }: BlockProps<Header>) {
   const {
     alignment,
     backgroundColor,
     body,
     border,
     color,
-    format,
     margin,
     padding,
+    textFormat,
   } = props;
   const alignClass =
     alignment === "center"
@@ -286,8 +287,8 @@ export function HeaderBlock({ props, onChange }: BlockProps<HeaderProps>) {
           ? "text-justify"
           : "text-left items-start";
 
-  const formatClass = format
-    ? `${format.includes("bold") ? "!font-bold" : ""} ${format.includes("italic") ? "!italic" : ""}`
+  const formatClass = textFormat
+    ? `${textFormat.includes("bold") ? "!font-bold" : ""} ${textFormat.includes("italic") ? "!italic" : ""}`
     : "font-normal";
 
   const sizeMap = {
@@ -308,8 +309,8 @@ export function HeaderBlock({ props, onChange }: BlockProps<HeaderProps>) {
         color,
         margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
         padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
-        textDecoration: format
-          ? `${format.includes("underline") ? "underline" : ""} ${format.includes("strikethrough") ? "line-through" : ""}`
+        textDecoration: textFormat
+          ? `${textFormat.includes("underline") ? "underline" : ""} ${textFormat.includes("strikethrough") ? "line-through" : ""}`
           : "none",
       }}
     >
@@ -327,7 +328,7 @@ export function HeaderBlock({ props, onChange }: BlockProps<HeaderProps>) {
   );
 }
 
-export function ImageBlock({ props }: BlockProps<ImageProps>) {
+export function ImageBlock({ props }: BlockProps<Image>) {
   const { alignment, backgroundColor, border, margin, padding } = props;
 
   const sizeMultiplier = 10;
@@ -399,16 +400,16 @@ export function ImageBlock({ props }: BlockProps<ImageProps>) {
   );
 }
 
-export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
+export function TextBlock({ props, onChange }: BlockProps<Text>) {
   const {
     alignment,
     backgroundColor,
     body,
     border,
     color,
-    format,
     margin,
     padding,
+    textFormat,
   } = props;
   const alignClass =
     alignment === "center"
@@ -419,8 +420,8 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
           ? "text-justify"
           : "text-left items-start";
 
-  const formatClass = format
-    ? `${format.includes("bold") ? "!font-bold" : ""} ${format.includes("italic") ? "!italic" : ""}`
+  const formatClass = textFormat
+    ? `${textFormat.includes("bold") ? "!font-bold" : ""} ${textFormat.includes("italic") ? "!italic" : ""}`
     : "font-normal";
 
   return (
@@ -432,8 +433,8 @@ export function TextBlock({ props, onChange }: BlockProps<TextProps>) {
         color,
         margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
         padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
-        textDecoration: format
-          ? `${format.includes("underline") ? "underline" : ""} ${format.includes("strikethrough") ? "line-through" : ""}`
+        textDecoration: textFormat
+          ? `${textFormat.includes("underline") ? "underline" : ""} ${textFormat.includes("strikethrough") ? "line-through" : ""}`
           : "none",
       }}
     >

@@ -1,4 +1,4 @@
-import { Theme } from "@/schema";
+import { SOCIAL_PLATFORMS, SocialPlatform, Theme } from "@/schema";
 import { clsx, type ClassValue } from "clsx";
 import { oklch, parse } from "culori";
 import { twMerge } from "tailwind-merge";
@@ -42,6 +42,19 @@ export function toProperCase(text: string) {
   }
 
   return result.join(" ");
+}
+
+export function buildSocialUrl(
+  platform: SocialPlatform,
+  handle: string,
+): string {
+  const trimmedInput = handle.trim();
+  if (!trimmedInput) return "";
+  if (/^https?:\/\//i.test(trimmedInput)) return trimmedInput;
+  const { baseUrl } = SOCIAL_PLATFORMS[platform];
+  if (platform === "whatsapp")
+    return `${baseUrl}${trimmedInput.replace(/\D/g, "")}`;
+  return `${baseUrl}${trimmedInput.replace(/^@/, "")}`;
 }
 
 interface ThemeVars {

@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toProperCase } from "@/lib/utils";
-import { AlignmentProps, AlignmentSchema } from "@/schema";
+import { Alignment, AlignmentSchema } from "@/schema";
 import {
   AlignCenterVertical,
   AlignEndVertical,
@@ -30,11 +30,11 @@ export default function AlignmentField({
   isButton = false,
   isText = false,
 }: {
-  alignment: AlignmentProps;
-  setAlignment: Dispatch<SetStateAction<AlignmentProps>>;
+  alignment: Alignment;
+  setAlignment: Dispatch<SetStateAction<Alignment>>;
   isFullWidth?: boolean;
   setIsFullWidth?: Dispatch<SetStateAction<boolean>>;
-  patch: (partial: { alignment: AlignmentProps; isFullWidth: boolean }) => void;
+  patch: (partial: { alignment: Alignment; isFullWidth: boolean }) => void;
   excludeJustify?: boolean;
   isButton?: boolean;
   isText?: boolean;

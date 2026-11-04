@@ -22,11 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LinkProps, LinkTypeProps, PAGE_KEYS } from "@/schema";
+import { Link, LinkType, PAGE_KEYS } from "@/schema";
 import { useState } from "react";
 
 const LINK_OPTIONS: {
-  value: LinkTypeProps;
+  value: LinkType;
   label: string;
   description: string;
 }[] = [
@@ -52,16 +52,16 @@ export function LinkField({
   value,
   onChange,
 }: {
-  value: LinkProps;
-  onChange: (link: LinkProps) => void;
+  value: Link;
+  onChange: (link: Link) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [linkType, setLinkType] = useState<LinkTypeProps | null>(
+  const [linkType, setLinkType] = useState<LinkType | null>(
     value?.type ?? null,
   );
   const [draft, setDraft] = useState<string>(value?.value ?? "");
 
-  function handleTypeSelect(type: LinkTypeProps) {
+  function handleTypeSelect(type: LinkType) {
     setLinkType(type);
     setDraft(""); // clear previous value when switching types
     setOpen(true);
@@ -97,7 +97,7 @@ export function LinkField({
           )}
           <Select
             value={linkType ?? ""}
-            onValueChange={(v) => handleTypeSelect(v as LinkTypeProps)}
+            onValueChange={(v) => handleTypeSelect(v as LinkType)}
           >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Add a link" />

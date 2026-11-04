@@ -27,7 +27,7 @@ import { Slider } from "@/components/ui/slider";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { formatBytes } from "@/lib/utils";
-import { AlignmentProps, ImageProps } from "@/schema";
+import { Alignment, Image } from "@/schema";
 import { FileImage, X } from "lucide-react";
 import { startTransition, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -43,14 +43,14 @@ export default function ImageSettings({
   onChange,
 }: {
   businessId: string;
-  value: ImageProps;
-  onChange: (image: ImageProps) => void;
+  value: Image;
+  onChange: (image: Image) => void;
 }) {
   const [image, setImage] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(value.imageUrl);
   const [size, setSize] = useState(value.size ?? DEFAULT);
-  const [alignment, setAlignment] = useState<AlignmentProps>(
+  const [alignment, setAlignment] = useState<Alignment>(
     value.alignment ?? "left",
   );
   const [caption, setCaption] = useState(value.caption ?? "");
@@ -96,7 +96,7 @@ export default function ImageSettings({
     multiple: false,
   });
 
-  function patch(partial: Partial<ImageProps>) {
+  function patch(partial: Partial<Image>) {
     onChange({ ...value, ...partial });
   }
 

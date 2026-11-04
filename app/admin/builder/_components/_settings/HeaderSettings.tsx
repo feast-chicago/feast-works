@@ -13,11 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Business, HeaderProps, HeadingLevelSchema } from "@/schema";
+import { Business, Header, HeadingLevelSchema } from "@/schema";
 import { useState } from "react";
 import AlignmentField from "../_fields/AlignmentField";
-import FormatField from "../_fields/FormatField";
 import TextColorField from "../_fields/TextColorField";
+import FormatField from "../_fields/TextFormatField";
 
 const HEADING_LEVELS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 type HeadingLevel = (typeof HEADING_LEVELS)[number];
@@ -27,20 +27,20 @@ export default function HeaderSettings({
   business,
   onChange,
 }: {
-  value: HeaderProps;
+  value: Header;
   business: Business;
-  onChange: (header: HeaderProps) => void;
+  onChange: (header: Header) => void;
 }) {
   const [level, setLevel] = useState<HeadingLevel>(value.level ?? "h2");
-  const [alignment, setAlignment] = useState<HeaderProps["alignment"]>(
+  const [alignment, setAlignment] = useState<Header["alignment"]>(
     value.alignment ?? "left",
   );
-  const [format, setFormat] = useState<HeaderProps["format"]>(
-    value.format ?? [],
+  const [textFormat, setTextFormat] = useState<Header["textFormat"]>(
+    value.textFormat ?? [],
   );
-  const [color, setColor] = useState<HeaderProps["color"]>(value.color ?? "");
+  const [color, setColor] = useState<Header["color"]>(value.color ?? "");
 
-  function patch(partial: Partial<HeaderProps>) {
+  function patch(partial: Partial<Header>) {
     onChange({ ...value, ...partial });
   }
 
@@ -54,7 +54,7 @@ export default function HeaderSettings({
             <FieldLabel>Size</FieldLabel>
             <Select
               value={level}
-              onValueChange={(level: HeaderProps["level"]) => {
+              onValueChange={(level: Header["level"]) => {
                 setLevel(level);
                 patch({ level });
               }}
@@ -81,7 +81,11 @@ export default function HeaderSettings({
             isText
           />
 
-          <FormatField format={format} setFormat={setFormat} patch={patch} />
+          <FormatField
+            textFormat={textFormat}
+            setTextFormat={setTextFormat}
+            patch={patch}
+          />
 
           <TextColorField
             business={business}

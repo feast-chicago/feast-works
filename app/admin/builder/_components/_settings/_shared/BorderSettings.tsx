@@ -26,10 +26,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { BorderProps, BorderSchema, Business } from "@/schema";
+import { Border, BorderSchema, Business } from "@/schema";
 import { useState } from "react";
 
-type BorderStyle = BorderProps["style"];
+type BorderStyle = Border["style"];
 const [MIN, MAX] = [0, 50];
 
 export default function BorderSettings({
@@ -37,9 +37,9 @@ export default function BorderSettings({
   business,
   onChange,
 }: {
-  value: BorderProps;
+  value: Border;
   business: Business;
-  onChange: (border: BorderProps) => void;
+  onChange: (border: Border) => void;
 }) {
   const [width, setWidth] = useState(value.width ?? MIN);
   const [color, setColor] = useState(value.color ?? "");
@@ -50,7 +50,7 @@ export default function BorderSettings({
     secondary_color_foreground,
   } = business.theme;
 
-  function patch(partial: Partial<BorderProps>) {
+  function patch(partial: Partial<Border>) {
     onChange({ ...value, ...partial });
   }
 
