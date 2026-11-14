@@ -243,26 +243,41 @@ export function DividerBlock({
   props: Divider;
   onChange: (p: Divider) => void;
 }) {
-  const { border, color, margin, padding } = props;
+  const { backgroundColor, border, color, margin, padding, style, thickness } =
+    props;
   return (
     <section
       className="px-8 flex items-center gap-3"
       style={{
+        backgroundColor,
         border: `${border.width}px ${border.style.toLowerCase()} ${border.color}`,
         color,
         margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
         padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
       }}
     >
-      {props.style === "line" && <div className="flex-1 h-px" style={{color}}/>}
-      {props.style === "dots" && (
+      {props.style === "ellipsis" ? (
         <div className="flex-1 flex items-center justify-center gap-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="size-1.5 rounded-full bg-border" />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-full"
+              style={{
+                width: `${thickness}px`,
+                height: `${thickness}px`,
+                backgroundColor: color,
+              }}
+            />
           ))}
         </div>
+      ) : props.style === "blank" ? (
+        <div className="flex-1 " style={{ height: `${thickness}px` }} />
+      ) : (
+        <div
+          className="flex-1 h-px border-b"
+          style={{ borderBottom: `${thickness}px ${style} ${color}` }}
+        />
       )}
-      {props.style === "blank" && <div className="flex-1" />}
     </section>
   );
 }

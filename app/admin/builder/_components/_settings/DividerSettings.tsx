@@ -40,25 +40,22 @@ export default function DividerSettings({
             onChange={(style) => patch({ style })}
           />
 
+          <SliderField
+            id="divider-width"
+            label="Thickness"
+            value={value.thickness}
+            min={1}
+            max={10}
+            onChange={(thickness) => patch({ thickness: parseInt(thickness) })}
+          />
+
           {value.style !== "blank" && (
-            <>
-              <SliderField
-                id="divider-width"
-                label="Thickness"
-                value={value.thickness}
-                min={1}
-                max={10}
-                onChange={(thickness) =>
-                  patch({ thickness: parseInt(thickness) })
-                }
-              />
-              <TextColorField
-                business={business}
-                color={color}
-                setColor={setColor}
-                patch={patch}
-              />
-            </>
+            <TextColorField
+              business={business}
+              color={color}
+              setColor={setColor}
+              patch={patch}
+            />
           )}
         </AccordionContent>
       </AccordionItem>
