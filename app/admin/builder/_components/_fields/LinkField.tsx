@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,17 +14,13 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  Select as SelectPage,
-  SelectContent as SelectPageContent,
-  SelectGroup as SelectPageGroup,
-  SelectItem as SelectPageItem,
-  SelectTrigger as SelectPageTrigger,
-  SelectValue as SelectPageValue,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Link, LinkType, PAGE_KEYS } from "@/schema";
+import { Link as LinkIcon, Trash } from "lucide-react";
 import { useState } from "react";
+import SelectField from "./_shared/SelectField";
 
 const LINK_OPTIONS: {
   value: LinkType;
@@ -84,42 +81,25 @@ export function LinkField({
 
   return (
     <>
-      <Field className="w-full flex flex-row gap-5 justify-between items-center">
-        <FieldLabel>Link</FieldLabel>
-        <div className="flex items-center gap-2">
-          {value && (
-            <button
-              onClick={handleClear}
-              className="text-xs text-muted-foreground hover:text-destructive transition-colors"
-            >
-              Remove
-            </button>
-          )}
-          <Select
-            value={linkType ?? ""}
-            onValueChange={(v) => handleTypeSelect(v as LinkType)}
-          >
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="Add a link" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {LINK_OPTIONS.map(({ value, label }) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </Field>
+      <SelectField
+        id="item-link"
+        label="Link"
+        value={linkType ?? ""}
+        placeholder="Add a link"
+        options={LINK_OPTIONS}
+        onChange={handleTypeSelect}
+      />
 
-      {/* current link preview */}
-      {value?.value && (
-        <p className="text-xs text-muted-foreground truncate">
-          → {value.value}
-        </p>
+      {/* Current Link Preview */}
+      {value && (
+        <span className="flex justify-between items-baseline gap-2">
+          <span className="flex items-center gap-2 text-xs text-muted-foreground line-clamp-1">
+            <LinkIcon className="size-3" /> {value.value}
+          </span>
+          <Button variant="destructive" size="icon-xs" onClick={handleClear}>
+            <Trash />
+          </Button>
+        </span>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -132,20 +112,20 @@ export function LinkField({
             {linkType === "site_page" && (
               <Field>
                 <FieldLabel>Page</FieldLabel>
-                <SelectPage value={draft} onValueChange={setDraft}>
-                  <SelectPageTrigger>
-                    <SelectPageValue placeholder="Choose a page" />
-                  </SelectPageTrigger>
-                  <SelectPageContent>
-                    <SelectPageGroup>
+                <Select value={draft} onValueChange={setDraft}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a page" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
                       {PAGE_KEYS.map((page) => (
-                        <SelectPageItem key={page} value={page}>
+                        <SelectItem key={page} value={page}>
                           <span className="capitalize">{page}</span>
-                        </SelectPageItem>
+                        </SelectItem>
                       ))}
-                    </SelectPageGroup>
-                  </SelectPageContent>
-                </SelectPage>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </Field>
             )}
 
@@ -192,19 +172,16 @@ export function LinkField({
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <button
-                onClick={() => setOpen(false)}
-                className="text-sm text-muted-foreground hover:text-foreground"
-              >
+              <Button variant="destructive" onClick={() => setOpen(false)}>
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={handleSave}
                 disabled={!draft}
-                className="text-sm font-medium text-primary disabled:opacity-40"
               >
                 Save
-              </button>
+              </Button>
             </div>
           </div>
         </DialogContent>

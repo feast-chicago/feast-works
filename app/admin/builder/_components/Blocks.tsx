@@ -254,7 +254,7 @@ export function DividerBlock({
         padding: `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`,
       }}
     >
-      {props.style === "line" && <div className="flex-1 h-px bg-border" />}
+      {props.style === "line" && <div className="flex-1 h-px" style={{color}}/>}
       {props.style === "dots" && (
         <div className="flex-1 flex items-center justify-center gap-2">
           {[1, 2, 3].map((i) => (

@@ -10,24 +10,16 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Slider } from "@/components/ui/slider";
 import { Border, BorderSchema, Business } from "@/schema";
 import { useState } from "react";
+import SelectField from "../../_fields/_shared/SelectField";
+import SliderField from "../../_fields/_shared/SliderField";
 
 type BorderStyle = Border["style"];
 const [MIN, MAX] = [0, 50];
@@ -56,7 +48,7 @@ export default function BorderSettings({
 
   function handleWidthInput(raw: string) {
     const clean = raw.replace(/\D/g, "");
-    const n = Math.min(parseInt(clean || "0"), MAX);
+    const n = parseInt(clean || "0");
     setWidth(n);
     patch({ width: n });
   }
@@ -72,28 +64,15 @@ export default function BorderSettings({
         <AccordionTrigger>Border</AccordionTrigger>
         <AccordionContent className="h-fit flex flex-col gap-5">
           {/* Width */}
-          <Field>
-            <span className="flex flex-row justify-between">
-              <FieldLabel htmlFor="border-thickness">Thickness</FieldLabel>
-              <Input
-                id="border-thickness"
-                placeholder="0"
-                value={width}
-                onChange={(e) => handleWidthInput(e.target.value)}
-                className="w-10! text-center"
-              />
-            </span>
-            <Slider
-              value={[width]}
-              onValueChange={([v]) => {
-                setWidth(v);
-                patch({ width: v });
-              }}
-              min={MIN}
-              max={MAX}
-              step={1}
-            />
-          </Field>
+          <SliderField
+            id="border-width"
+            label="Thickness"
+            value={width}
+            min={MIN}
+            max={MAX}
+            step={1}
+            onChange={handleWidthInput}
+          />
 
           <Separator decorative />
 
@@ -171,26 +150,14 @@ export default function BorderSettings({
           <Separator decorative />
 
           {/* Style */}
-          <Field className="w-full max-w-xs flex flex-row gap-5 justify-between">
-            <FieldLabel>Style</FieldLabel>
-            <Select
-              value={value.style}
-              onValueChange={(v: BorderStyle) => patch({ style: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {BorderSchema.shape.style.options.map((style) => (
-                    <SelectItem key={style} value={style}>
-                      {style}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
+          <SelectField
+            id="border-style"
+            label="Style"
+            value={value.style}
+            placeholder="Choose"
+            options={BorderSchema.shape.style.options}
+            onChange={(style: BorderStyle) => patch({ style })}
+          />
         </AccordionContent>
       </AccordionItem>
     </Accordion>

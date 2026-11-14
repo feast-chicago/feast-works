@@ -12,52 +12,13 @@ import {
   FieldDescription,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Spacing } from "@/schema";
 import { useState } from "react";
+import SliderField from "../../_fields/_shared/SliderField";
+import SwitchField from "../../_fields/_shared/SwitchField";
 
 const [MIN, MAX] = [0, 50];
-
-function SpacingSlider({
-  label,
-  id,
-  value,
-  onChange,
-}: {
-  label: string;
-  id: string;
-  value: number;
-  onChange: (n: number) => void;
-}) {
-  function handleInput(raw: string) {
-    const n = Math.min(parseInt(raw.replace(/\D/g, "") || "0"), MAX);
-    onChange(n);
-  }
-
-  return (
-    <Field>
-      <span className="flex flex-row justify-between">
-        <FieldLabel htmlFor={id}>{label}</FieldLabel>
-        <Input
-          id={id}
-          placeholder="0"
-          value={value}
-          onChange={(e) => handleInput(e.target.value)}
-          className="w-10! text-center"
-        />
-      </span>
-      <Slider
-        value={[value]}
-        onValueChange={([v]) => onChange(v)}
-        min={MIN}
-        max={MAX}
-        step={1}
-      />
-    </Field>
-  );
-}
 
 export default function SpacingSettings({
   label,
@@ -75,7 +36,9 @@ export default function SpacingSettings({
   const [allEnabled, setAllEnabled] = useState(false);
   const [allValue, setAllValue] = useState(MIN);
 
-  function setAll(n: number) {
+  function setAll(raw: string) {
+    const clean = raw.replace(/\D/g, "");
+    const n = parseInt(clean || "0");
     setAllValue(n);
     onChange({ top: n, bottom: n, left: n, right: n });
   }
@@ -90,49 +53,65 @@ export default function SpacingSettings({
             of the border and your block.
           </p>
 
-          <Field orientation="horizontal" className="max-w-sm">
-            <FieldContent>
-              <FieldLabel>Apply to all sides</FieldLabel>
-              <FieldDescription className="text-xs">
-                Add the same amount of {label.toLowerCase()} to all sides at
-                once.
-              </FieldDescription>
-            </FieldContent>
-            <Switch checked={allEnabled} onCheckedChange={setAllEnabled} />
-          </Field>
+          <SwitchField
+            id={`${accordionValue}-all`}
+            label="Apply to all sides"
+            description={`Add the same amount of ${label.toLowerCase()} to all sides at once.`}
+            checked={allEnabled}
+            onChange={setAllEnabled}
+          />
 
           {allEnabled ? (
-            <SpacingSlider
-              label={label}
+            <SliderField
               id={`${accordionValue}-all`}
+              label={label}
               value={allValue}
+              min={MIN}
+              max={MAX}
               onChange={setAll}
             />
           ) : (
             <>
-              <SpacingSlider
-                label="Top"
+              <SliderField
                 id={`${accordionValue}-top`}
+                label="Top"
                 value={value.top}
-                onChange={(n) => onChange({ ...value, top: n })}
+                min={MIN}
+                max={MAX}
+                onChange={(top) => onChange({ ...value, top: parseInt(top) })}
               />
-              <SpacingSlider
-                label="Bottom"
+
+              <SliderField
                 id={`${accordionValue}-bottom`}
+                label="Bottom"
                 value={value.bottom}
-                onChange={(n) => onChange({ ...value, bottom: n })}
+                min={MIN}
+                max={MAX}
+                onChange={(bottom) =>
+                  onChange({ ...value, bottom: parseInt(bottom) })
+                }
               />
-              <SpacingSlider
-                label="Left"
+
+              <SliderField
                 id={`${accordionValue}-left`}
+                label="Left"
                 value={value.left}
-                onChange={(n) => onChange({ ...value, left: n })}
+                min={MIN}
+                max={MAX}
+                onChange={(left) =>
+                  onChange({ ...value, left: parseInt(left) })
+                }
               />
-              <SpacingSlider
-                label="Right"
+
+              <SliderField
                 id={`${accordionValue}-right`}
+                label="Right"
                 value={value.right}
-                onChange={(n) => onChange({ ...value, right: n })}
+                min={MIN}
+                max={MAX}
+                onChange={(right) =>
+                  onChange({ ...value, right: parseInt(right) })
+                }
               />
             </>
           )}

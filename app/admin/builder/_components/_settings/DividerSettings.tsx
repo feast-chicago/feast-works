@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/accordion";
 import { Business, Divider, DividerSchema } from "@/schema";
 import { useState } from "react";
-import SelectField from "../_fields/SelectField";
-import SliderField from "../_fields/SliderField";
+import SelectField from "../_fields/_shared/SelectField";
+import SliderField from "../_fields/_shared/SliderField";
 import TextColorField from "../_fields/TextColorField";
 
 export default function DividerSettings({
@@ -33,6 +33,7 @@ export default function DividerSettings({
         <AccordionTrigger>Divider</AccordionTrigger>
         <AccordionContent className="h-fit flex flex-col gap-5">
           <SelectField
+            id="divider-style"
             label="Style"
             value={value.style}
             options={DividerSchema.shape.style.options}
@@ -42,11 +43,14 @@ export default function DividerSettings({
           {value.style !== "blank" && (
             <>
               <SliderField
-                label="Thickness (px)"
+                id="divider-width"
+                label="Thickness"
                 value={value.thickness}
                 min={1}
                 max={10}
-                onChange={(thickness) => patch({ thickness })}
+                onChange={(thickness) =>
+                  patch({ thickness: parseInt(thickness) })
+                }
               />
               <TextColorField
                 business={business}

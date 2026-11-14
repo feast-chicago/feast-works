@@ -34,6 +34,7 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import AlignmentField from "../_fields/AlignmentField";
 import { LinkField } from "../_fields/LinkField";
+import SwitchField from "../_fields/_shared/SwitchField";
 
 const [MIN, MAX, DEFAULT] = [10, 50, 20];
 
@@ -195,21 +196,16 @@ export default function ImageSettings({
           </Field>
 
           {/* Switch  */}
-          <Field orientation="horizontal" className="max-w-sm">
-            <FieldContent>
-              <FieldLabel>Full width on mobile</FieldLabel>
-              <FieldDescription className="text-xs">
-                Display the image at max size on mobile devices.
-              </FieldDescription>
-            </FieldContent>
-            <Switch
-              checked={isFullWidthOnMobile}
-              onCheckedChange={(checked) => {
-                setIsFullWidthOnMobile(checked);
-                patch({ isFullWidthOnMobile: checked });
-              }}
-            />
-          </Field>
+          <SwitchField
+            id="is-full-width-on-mobile"
+            label="Full width on mobile"
+            description="Display the image at max size on mobile devices."
+            checked={isFullWidthOnMobile}
+            onChange={(checked) => {
+              setIsFullWidthOnMobile(checked);
+              patch({ isFullWidthOnMobile: checked });
+            }}
+          />
 
           {/* Caption */}
           <Field>
