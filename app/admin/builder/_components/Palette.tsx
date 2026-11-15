@@ -53,12 +53,12 @@ const AVAILABLE_COMPONENTS: {
     description: "Add social media links",
     icon: <HeartPlus className="size-7" />,
   },
-  {
-    type: "map",
-    label: "Map",
-    description: "Add your location on a map",
-    icon: <MapPin className="size-7" />,
-  },
+  // {
+  //   type: "map",
+  //   label: "Map",
+  //   description: "Add your location on a map",
+  //   icon: <MapPin className="size-7" />,
+  // },
   {
     type: "divider",
     label: "Divider",
