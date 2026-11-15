@@ -5,6 +5,7 @@ import {
   DividerEditor,
   HeaderEditor,
   ImageEditor,
+  SocialEditor,
   TextEditor,
 } from "./BlockEditors";
 
@@ -15,6 +16,7 @@ const editors: Partial<
   divider: DividerEditor,
   header: HeaderEditor,
   image: ImageEditor,
+  social: SocialEditor,
   text: TextEditor,
 };
 

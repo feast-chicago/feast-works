@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Business, Divider, DividerSchema } from "@/schema";
 import { useState } from "react";
 import SelectField from "../_fields/_shared/SelectField";
 import SliderField from "../_fields/_shared/SliderField";
 import TextColorField from "../_fields/TextColorField";
+import SettingsAccordion from "./_shared/SettingsAccordion";
 
 export default function DividerSettings({
   value,
@@ -28,37 +23,32 @@ export default function DividerSettings({
   }
 
   return (
-    <Accordion type="single" collapsible className="rounded-lg border">
-      <AccordionItem value="divider" className="px-4">
-        <AccordionTrigger>Divider</AccordionTrigger>
-        <AccordionContent className="h-fit flex flex-col gap-5">
-          <SelectField
-            id="divider-style"
-            label="Style"
-            value={value.style}
-            options={DividerSchema.shape.style.options}
-            onChange={(style) => patch({ style })}
-          />
+    <SettingsAccordion label="Divider" value="divider">
+      <SelectField
+        id="divider-style"
+        label="Style"
+        value={value.style}
+        options={DividerSchema.shape.style.options}
+        onChange={(style) => patch({ style })}
+      />
 
-          <SliderField
-            id="divider-width"
-            label="Thickness"
-            value={value.thickness}
-            min={1}
-            max={10}
-            onChange={(thickness) => patch({ thickness: parseInt(thickness) })}
-          />
+      <SliderField
+        id="divider-width"
+        label="Thickness"
+        value={value.thickness}
+        min={1}
+        max={10}
+        onChange={(thickness) => patch({ thickness: parseInt(thickness) })}
+      />
 
-          {value.style !== "blank" && (
-            <TextColorField
-              business={business}
-              color={color}
-              setColor={setColor}
-              patch={patch}
-            />
-          )}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      {value.style !== "blank" && (
+        <TextColorField
+          business={business}
+          color={color}
+          setColor={setColor}
+          patch={patch}
+        />
+      )}
+    </SettingsAccordion>
   );
 }

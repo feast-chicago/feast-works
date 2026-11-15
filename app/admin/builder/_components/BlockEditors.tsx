@@ -8,6 +8,7 @@ import {
   Divider,
   Header,
   Image,
+  Social,
   Text,
 } from "@/schema";
 import BackgroundColorSettings from "./_settings/_shared/BackgroundColorSettings";
@@ -17,6 +18,7 @@ import ButtonSettings from "./_settings/ButtonSettings";
 import DividerSettings from "./_settings/DividerSettings";
 import HeaderSettings from "./_settings/HeaderSettings";
 import ImageSettings from "./_settings/ImageSettings";
+import SocialSettings from "./_settings/SocialSettings";
 import TextSettings from "./_settings/TextSettings";
 
 type BaseEditorProps<T extends BaseProps> = {
@@ -158,6 +160,30 @@ export function ImageEditor({
         businessId={business.id}
         value={props}
         onChange={(i) => update(i)}
+      />
+    </BaseEditor>
+  );
+}
+
+export function SocialEditor({
+  business,
+  props,
+  onChange,
+}: {
+  business: Business;
+  props: Social;
+  onChange: (props: Social) => void;
+}) {
+  function update(patch: Partial<Social>) {
+    onChange({ ...props, ...patch });
+  }
+
+  return (
+    <BaseEditor business={business} props={props} onChange={onChange}>
+      <SocialSettings
+        value={props}
+        business={business}
+        onChange={(h) => update(h)}
       />
     </BaseEditor>
   );

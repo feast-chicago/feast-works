@@ -1,9 +1,3 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
@@ -19,6 +13,7 @@ import { useState } from "react";
 import AlignmentField from "../_fields/AlignmentField";
 import { LinkField } from "../_fields/LinkField";
 import TextFormatField from "../_fields/TextFormatField";
+import SettingsAccordion from "./_shared/SettingsAccordion";
 
 export default function ButtonSettings({
   value,
@@ -49,86 +44,81 @@ export default function ButtonSettings({
   }
 
   return (
-    <Accordion type="single" collapsible className="rounded-lg border">
-      <AccordionItem value="button" className="px-4">
-        <AccordionTrigger>Button</AccordionTrigger>
-        <AccordionContent className="h-fit flex flex-col gap-5">
-          {/* Variant */}
-          <Field className="flex flex-row gap-5 justify-between items-center">
-            <FieldLabel>Style</FieldLabel>
-            <Select
-              value={variant}
-              onValueChange={(variant: Button["variant"]) => {
-                setVariant(variant);
-                patch({ variant });
-              }}
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {ButtonSchema.shape.variant.options.map((v) => (
-                    <SelectItem key={v} value={v}>
-                      {toProperCase(v)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
+    <SettingsAccordion label="Button" value="button">
+      {/* Variant */}
+      <Field className="flex flex-row gap-5 justify-between items-center">
+        <FieldLabel>Style</FieldLabel>
+        <Select
+          value={variant}
+          onValueChange={(variant: Button["variant"]) => {
+            setVariant(variant);
+            patch({ variant });
+          }}
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {ButtonSchema.shape.variant.options.map((v) => (
+                <SelectItem key={v} value={v}>
+                  {toProperCase(v)}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
 
-          {/* Size */}
-          <Field className="flex flex-row gap-5 justify-between items-center">
-            <FieldLabel>Size</FieldLabel>
-            <Select
-              value={size}
-              onValueChange={(size: Button["size"]) => {
-                setSize(size);
-                patch({ size });
-              }}
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {ButtonSchema.shape.size.options.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {toProperCase(s)}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </Field>
+      {/* Size */}
+      <Field className="flex flex-row gap-5 justify-between items-center">
+        <FieldLabel>Size</FieldLabel>
+        <Select
+          value={size}
+          onValueChange={(size: Button["size"]) => {
+            setSize(size);
+            patch({ size });
+          }}
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {ButtonSchema.shape.size.options.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {toProperCase(s)}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
 
-          <AlignmentField
-            alignment={alignment}
-            setAlignment={setAlignment}
-            isFullWidth={isFullWidth}
-            setIsFullWidth={setIsFullWidth}
-            patch={patch}
-            excludeJustify
-            isButton
-          />
+      <AlignmentField
+        alignment={alignment}
+        setAlignment={setAlignment}
+        isFullWidth={isFullWidth}
+        setIsFullWidth={setIsFullWidth}
+        patch={patch}
+        excludeJustify
+        isButton
+      />
 
-          <TextFormatField
-            textFormat={textFormat}
-            setTextFormat={setTextFormat}
-            patch={patch}
-          />
+      <TextFormatField
+        textFormat={textFormat}
+        setTextFormat={setTextFormat}
+        patch={patch}
+      />
 
-          {/* <TextColorField
+      {/* <TextColorField
             business={business}
             color={color}
             setColor={setColor}
             patch={patch}
           /> */}
 
-          <LinkField value={value.link} onChange={(link) => patch({ link })} />
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      <LinkField value={value.link} onChange={(link) => patch({ link })} />
+    </SettingsAccordion>
   );
 }

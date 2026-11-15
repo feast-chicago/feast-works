@@ -18,19 +18,21 @@ export default function SelectField<T extends string>({
   placeholder = "Add a value...",
   options,
   onChange,
+  adjustOptionLabels = true,
 }: {
   id: string;
-  label: string;
+  label?: string;
   value: T | "";
   placeholder?: string;
   options: readonly Option<T>[];
   onChange: (value: T) => void;
+  adjustOptionLabels?: boolean;
 }) {
   return (
     <Field className="flex flex-row gap-5 justify-between items-center">
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      {label && <FieldLabel htmlFor={id}>{label}</FieldLabel>}
       <Select value={value} onValueChange={(v) => onChange(v as T)}>
-        <SelectTrigger id={id} className="w-fit">
+        <SelectTrigger id={id} className={label ? "w-fit" : "w-full"}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -38,7 +40,10 @@ export default function SelectField<T extends string>({
             {options.map((option, i) => {
               const { value, label } =
                 typeof option === "string"
-                  ? { value: option, label: toProperCase(option) }
+                  ? {
+                      value: option,
+                      label: adjustOptionLabels ? toProperCase(option) : option,
+                    }
                   : option;
               return (
                 <SelectItem key={i} value={value}>

@@ -1,12 +1,17 @@
 "use client";
 
-import { IS_INLINE_EDITING_ALLOWED } from "@/lib/utils";
+import { buildSocialUrl, IS_INLINE_EDITING_ALLOWED } from "@/lib/utils";
 import {
+  Alignment,
+  BaseProps,
   Button,
   Divider,
   Header,
   Image,
   PageComponent,
+  Social,
+  SOCIAL_PLATFORMS,
+  SocialPlatform,
   Text,
   Theme,
 } from "@/schema";
@@ -84,6 +89,24 @@ export function InlineEdit({
       {value || (editing ? "" : placeholder)}
     </Tag>
   );
+}
+
+const FLEX_CLASS: Record<Alignment, string> = {
+  left: "flex-start",
+  center: "center",
+  right: "flex-end",
+  justify: "flex-start",
+};
+
+function getBaseStyle(p: BaseProps): React.CSSProperties {
+  return {
+    backgroundColor: p.backgroundColor || undefined,
+    border: p.border.width
+      ? `${p.border.width}px ${p.border.style.toLowerCase()} ${p.border.color}`
+      : undefined,
+    margin: `${p.margin.top}px ${p.margin.right}px ${p.margin.bottom}px ${p.margin.left}px`,
+    padding: `${p.padding.top}px ${p.padding.right}px ${p.padding.bottom}px ${p.padding.left}px`,
+  };
 }
 
 /**
@@ -415,6 +438,90 @@ export function ImageBlock({ props }: BlockProps<Image>) {
   );
 }
 
+export function SocialBlock({ props, theme }: BlockProps<Social>) {
+  const { links, variant, display, shape, size, layout, gap, alignment } =
+    props;
+
+  // Public site skips links with no value, but the builder shows them
+  const visibleLinks = links.filter(
+    (l) => IS_INLINE_EDITING_ALLOWED || l.value.trim() !== "",
+  );
+
+  if (visibleLinks.length === 0) {
+    return IS_INLINE_EDITING_ALLOWED ? (
+      <section style={getBaseStyle(props)}>
+        <p className="text-center text-sm text-muted-foreground">
+          Add social media links in the settings panel
+        </p>
+      </section>
+    ) : null;
+  }
+
+  const sizeClass = {
+    default: "h-9 gap-1.5 px-2.5 text-sm", // 18
+    "extra small": "h-6 gap-1 px-2 text-xs", // 14
+    small: "h-8 gap-1 px-2.5 text-sm", // 16
+    large: "h-10 gap-1.5 px-2.5 text-sm", // 22
+  }[size];
+
+  const roundedClass = {
+    rounded: "rounded-md",
+    pill: "rounded-full",
+    square: "rounded-none",
+  }[shape];
+
+  const showIcon = display !== "text";
+  const showText = display !== "icon";
+
+  function getSocialVariantStyles(
+    platform: SocialPlatform,
+  ): React.CSSProperties {
+    if (variant === "brand") {
+      return {
+        backgroundColor: SOCIAL_PLATFORMS[platform].brandColor,
+        color: "#ffffff",
+      };
+    }
+    return getVariantStyles(variant, theme);
+  }
+
+  return (
+    <section style={getBaseStyle(props)}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: layout,
+          flexWrap: layout === "row" ? "wrap" : "nowrap",
+          gap,
+          justifyContent:
+            layout === "row" ? FLEX_CLASS[alignment] : "flex-start",
+          alignItems: layout === "column" ? FLEX_CLASS[alignment] : "center",
+        }}
+      >
+        {visibleLinks.map((link) => {
+          const { Icon, label } = SOCIAL_PLATFORMS[link.platform];
+          return (
+            <a
+              key={link.id}
+              href={buildSocialUrl(link.platform, link.value) || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              onClick={(e) => {
+                if (IS_INLINE_EDITING_ALLOWED) e.preventDefault();
+              }}
+              style={getSocialVariantStyles(link.platform)}
+              className={`inline-flex items-center gap-2 font-medium transition-opacity hover:opacity-80 ${sizeClass} ${roundedClass}`}
+            >
+              {showIcon && <Icon className="size-full py-1.5" />}
+              {showText && <span>{label}</span>}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 export function TextBlock({ props, onChange }: BlockProps<Text>) {
   const {
     alignment,
@@ -481,5 +588,6 @@ export const BLOCK_MAP: Partial<
   divider: DividerBlock,
   header: HeaderBlock,
   image: ImageBlock,
+  social: SocialBlock,
   text: TextBlock,
 };
