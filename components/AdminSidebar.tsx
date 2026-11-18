@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Highlighter } from "./ui/highlighter";
 import { Separator } from "./ui/separator";
+import Image from "next/image";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -102,13 +103,21 @@ export default function AdminSidebar() {
   );
 }
 
+const HREF = "/admin";
+const LOGO_SIZE = 28;
+
 export const Logo = () => {
   return (
     <a
-      href="#"
+      href={HREF}
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+      <Image
+        src="/logo_square.png"
+        alt="Logo"
+        width={LOGO_SIZE}
+        height={LOGO_SIZE}
+      />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -122,10 +131,15 @@ export const Logo = () => {
 export const LogoIcon = () => {
   return (
     <a
-      href="#"
+      href={HREF}
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+      <Image
+        src="/logo_square.png"
+        alt="Logo"
+        width={LOGO_SIZE}
+        height={LOGO_SIZE}
+      />
     </a>
   );
 };
